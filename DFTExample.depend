@@ -140,11 +140,12 @@
 	"ReferenceSineWave.h"
 	"RingBuffer.h"
 
-1686827756 /Data/Projects/DFTExample/include/ReferenceSineWave.h
+1686831543 /Data/Projects/DFTExample/include/ReferenceSineWave.h
 	<complex>
 	<vector>
 	"RingBuffer.h"
 	<assert.h>
+	"Convolution.h"
 
 1686812522 /Data/Projects/DFTExample/include/RingBuffer.h
 	<vector>
@@ -164,4 +165,11 @@
 	<array>
 	<math.h>
 	<cassert>
+
+1686831778 /Data/Projects/DFTExample/include/Convolution.h
+	<vector>
+	<assert.h>
+
+1686831810 source:/Data/Projects/DFTExample/src/Convolution.cpp
+	"Convolution.h"
 

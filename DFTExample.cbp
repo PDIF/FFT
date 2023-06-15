@@ -16,6 +16,7 @@
 					<Add option="-std=c17" />
 					<Add option="-g" />
 					<Add directory="include" />
+					<Add directory="./" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -26,6 +27,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="include" />
+					<Add directory="./" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -36,11 +38,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Convolution.h" />
 		<Unit filename="include/DigitalSignalProcess.h" />
 		<Unit filename="include/ReferenceSineWave.h" />
 		<Unit filename="include/RingBuffer.h" />
 		<Unit filename="include/SignalGenerate.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Convolution.cpp" />
 		<Unit filename="src/DigitalSignalProcess.cpp" />
 		<Unit filename="src/ReferenceSineWave.cpp" />
 		<Unit filename="src/SignalGenerate.cpp" />
