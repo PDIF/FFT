@@ -1,0 +1,167 @@
+# depslib dependency file v1.0
+1685969530 source:d:\projects\dftexample\dftexample\main.cpp
+	<iostream>
+	<cmath>
+	<complex>
+	"DigitalSignalProcess.h"
+	"RingBuffer.h"
+	"ReferenceSineWave.h"
+
+1685969820 SineWave.h"
+
+1684916358 source:d:\projects\dftexample\dftexample\src\digitalsignalprocess.cpp
+	"DigitalSignalProcess.h"
+
+1684916358 gnalProcess.h"
+
+1685975967 d:\projects\dftexample\dftexample\include\digitalsignalprocess.h
+	<cmath>
+	<complex>
+	<array>
+	<vector>
+	<iostream>
+	<assert.h>
+	"ReferenceSineWave.h"
+	"RingBuffer.h"
+
+1685446278 r.h"
+
+1683893900 source:d:\projects\dftexample\dftexample\src\roundarray.cpp
+	"RoundArray.h"
+
+1683893900 y.h"
+
+1683889801 d:\projects\dftexample\dftexample\include\roundarray.h
+	<vector>
+	<array>
+	<cassert>
+	<RoundBase.h>
+
+1683893727 .h>
+
+1683795611 source:d:\projects\dftexample\dftexample\src\universalroundarray.cpp
+	"UniversalRoundArray.h"
+
+1683795611 RoundArray.h"
+
+1683797448 d:\projects\dftexample\dftexample\include\universalroundarray.h
+	<vector>
+	<array>
+	<cassert>
+
+1685968081 
+
+1683799242 source:d:\projects\dftexample\dftexample\src\roundarrayvector.cpp
+	"RoundArrayVector.h"
+
+1683799242 yVector.h"
+
+1683799028 d:\projects\dftexample\dftexample\include\roundarrayvector.h
+	<vector>
+	<cassert>
+
+1683893727 source:d:\projects\dftexample\dftexample\src\roundvector.cpp
+	"RoundVector.h"
+
+1683893727 or.h"
+
+1683893727 d:\projects\dftexample\dftexample\include\roundvector.h
+	<vector>
+	<cassert>
+	<RoundBase.h>
+
+1683889941 source:d:\projects\dftexample\dftexample\src\roundbase.cpp
+	"RoundBase.h"
+
+1683889941 .h"
+
+1683890127 d:\projects\dftexample\dftexample\include\roundbase.h
+	<vector>
+	<cassert>
+
+1683812831 source:d:\projects\dftexample\dftexample\src\roundbuffer.cpp
+	"RoundBuffer.h"
+
+1683812831 er.h"
+
+1683812950 d:\projects\dftexample\dftexample\include\roundbuffer.h
+	<vector>
+	<cassert>
+
+1683886273 source:d:\projects\dftexample\dftexample\src\basebuffer.cpp
+	"BaseBuffer.h"
+
+1683884763 d:\projects\dftexample\dftexample\include\basebuffer.h
+	<vector>
+	<array>
+	<cassert>
+	<iostream>
+
+1684914574 source:d:\projects\dftexample\dftexample\src\signalgenerate.cpp
+	"SignalGenerate.h"
+
+1684914574 erate.h"
+
+1684502537 d:\projects\dftexample\dftexample\include\signalgenerate.h
+	<vector>
+	<array>
+	<math.h>
+	<cassert>
+
+1685969733 d:\projects\dftexample\dftexample\include\referencesinewave.h
+	<cmath>
+	<complex>
+	<vector>
+	<assert.h>
+
+1685969820 source:d:\projects\dftexample\dftexample\src\referencesinewave.cpp
+	"ReferenceSineWave.h"
+
+1685446278 source:d:\projects\dftexample\dftexample\src\ringbuffer.cpp
+	"RingBuffer.h"
+
+1685968081 d:\projects\dftexample\dftexample\include\ringbuffer.h
+	<vector>
+	<assert.h>
+
+1686827420 source:/Data/Projects/DFTExample/main.cpp
+	<iostream>
+	<complex>
+	"DigitalSignalProcess.h"
+	"RingBuffer.h"
+	"ReferenceSineWave.h"
+
+1686825489 /Data/Projects/DFTExample/include/DigitalSignalProcess.h
+	<complex>
+	<vector>
+	<algorithm>
+	<assert.h>
+	<iostream>
+	"ReferenceSineWave.h"
+	"RingBuffer.h"
+
+1686827756 /Data/Projects/DFTExample/include/ReferenceSineWave.h
+	<complex>
+	<vector>
+	"RingBuffer.h"
+	<assert.h>
+
+1686812522 /Data/Projects/DFTExample/include/RingBuffer.h
+	<vector>
+	<assert.h>
+
+1686826484 source:/Data/Projects/DFTExample/src/DigitalSignalProcess.cpp
+	"DigitalSignalProcess.h"
+
+1686827529 source:/Data/Projects/DFTExample/src/ReferenceSineWave.cpp
+	"ReferenceSineWave.h"
+
+1684914574 source:/Data/Projects/DFTExample/src/SignalGenerate.cpp
+	"SignalGenerate.h"
+
+1684502537 /Data/Projects/DFTExample/include/SignalGenerate.h
+	<vector>
+	<array>
+	<math.h>
+	<cassert>
+
