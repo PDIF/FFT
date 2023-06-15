@@ -1,0 +1,96 @@
+#ifndef CONVOLUTION_H
+#define CONVOLUTION_H
+
+
+class Convolution
+{
+    using size_vec_t    = std::vector<size_t>;
+    using size_matrix_t = std::vector<size_vec_t>;
+
+public:
+
+    Convolution();
+
+    virtual ~Convolution();
+
+    void            rebuild(size_t newPointsPerPeriod);
+
+    size_t          length() const;
+
+    size_t          size() const;
+
+    size_t          degrees(size_t index) const;
+
+    const
+    size_vec_t&     operator[](size_t index) const;
+
+    const
+    size_matrix_t&  nodes() const;
+
+    const
+    size_vec_t&     degrees() const;
+
+    const
+    size_vec_t&     primeFactors() const;
+
+    const
+    size_vec_t&     expand() const;
+
+private:
+
+    size_vec_t      _primeFactors;
+    size_matrix_t   _nodes;
+    size_vec_t      _full;
+    size_vec_t      _degrees;
+    
+    
+    
+    size_vec_t _calculatePrimeFactors(size_t pointsPerPeriod);
+
+
+
+size_matrix_t Convolution::_calculateNodes(const size_vec_t& newPrimeFactor);
+
+
+
+size_vec_t Convolution::_calculateFull(const size_vec_t& newPrimeFactor)
+{
+    size_vec_t tmpFull;
+
+    size_t base = 0;
+    size_t step = 1;
+    for (auto factor : newPrimeFactor) {
+
+        assert(factor > 0 && "Null primeFactor");
+        for (size_t i = 0; i < factor - 1; ++i) {
+            base += step;
+            tmpFull.push_back(base - 1);
+
+        }
+
+        step *= factor;
+        //base += step;
+    }
+
+    return tmpFull;
+
+};
+
+
+
+size_vec_t Convolution::_calculateDegrees(const size_vec_t& newPrimeFactor)
+{
+    size_vec_t tmpDegrees(newPrimeFactor);
+
+    size_t multiplier = 1;
+    for (size_t i = 0; i < tmpDegrees.size(); ++i) {
+        tmpDegrees[i]  = multiplier;
+        multiplier    *= newPrimeFactor[i];
+    }
+    return tmpDegrees;
+};
+
+};
+
+#endif // CONVOLUTION_H
+
