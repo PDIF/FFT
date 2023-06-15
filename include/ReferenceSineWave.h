@@ -9,74 +9,7 @@
 #include <assert.h>
 
 #include "Convolution.h"
-
-class Step
-{
-    using complex_t = std::complex<double>;
-
-public:
-    Step(size_t initPointsPerPeriod)
-    : _stepRadian(_computePiRadian(initPointsPerPeriod))
-    , _stepDegree(_computePiDegree(initPointsPerPeriod))
-    , _stepComplex(_computePiComplex(initPointsPerPeriod))
-    { };
-
-    void rebuild(size_t newPointsPerPeriod)
-    {
-       _stepRadian  = _computePiRadian(newPointsPerPeriod);
-       _stepDegree  = _computePiDegree(newPointsPerPeriod);
-       _stepComplex = _computePiComplex(newPointsPerPeriod);
-    };
-
-
-    double Degree() const
-    {
-        return _stepDegree;
-    };
-
-    double Radian() const
-    {
-        return _stepRadian;
-    };
-
-    complex_t Complex() const
-    {
-        return _stepComplex;
-    };
-
-
-private:
-
-    double      _stepRadian;
-    double      _stepDegree;
-    complex_t   _stepComplex;
-
-    double _computePiRadian(size_t newPointsPerPeriod)
-    {
-        assert(newPointsPerPeriod > 0 && "Points per period zero value");
-        return 2.0 * piRadian() / newPointsPerPeriod;
-    };
-
-    double _computePiDegree(size_t newPointsPerPeriod)
-    {
-        assert(newPointsPerPeriod > 0 && "Points per period zero value");
-        return 2.0 * piDegree() / newPointsPerPeriod;
-    };
-
-    complex_t _computePiComplex(size_t newPointsPerPeriod)
-    {
-        assert(newPointsPerPeriod > 0 && "Points per period zero value");
-        return std::exp(complex_t{0, _computePiRadian(newPointsPerPeriod)});
-    };
-
-    static constexpr double piDegree() {
-        return 180.0;
-    };
-
-    static constexpr double piRadian() {
-        return acos(-1);
-    };
-};
+#include "Step.h"
 
 class Base
 {

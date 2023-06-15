@@ -43,11 +43,13 @@
 		<Unit filename="include/ReferenceSineWave.h" />
 		<Unit filename="include/RingBuffer.h" />
 		<Unit filename="include/SignalGenerate.h" />
+		<Unit filename="include/Step.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Convolution.cpp" />
 		<Unit filename="src/DigitalSignalProcess.cpp" />
 		<Unit filename="src/ReferenceSineWave.cpp" />
 		<Unit filename="src/SignalGenerate.cpp" />
+		<Unit filename="src/Step.cpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
