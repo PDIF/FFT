@@ -203,3 +203,70 @@
 1686917966 source:/Data/Projects/DFTExample/src/Fft.cpp
 	"Fft.h"
 
+1686920522 source:d:\projects\dftexample\fft\main.cpp
+	<iostream>
+	<fstream>
+	<complex>
+	"Fft.h"
+	"Dft.h"
+	<ctime>
+	"ReferenceSineWave.h"
+
+1686920522 d:\projects\dftexample\fft\include\fft.h
+	<complex>
+	<vector>
+	<algorithm>
+	<assert.h>
+	<iostream>
+	"ReferenceSineWave.h"
+	"RingBuffer.h"
+
+1686920522 d:\projects\dftexample\fft\include\referencesinewave.h
+	<complex>
+	<vector>
+	"RingBuffer.h"
+	<assert.h>
+	"Convolution.h"
+	"Step.h"
+
+1686920522 d:\projects\dftexample\fft\include\ringbuffer.h
+	<vector>
+	<assert.h>
+
+1686920522 d:\projects\dftexample\fft\include\convolution.h
+	<vector>
+	<assert.h>
+
+1686920522 d:\projects\dftexample\fft\include\step.h
+	<complex>
+	<assert.h>
+
+1686920522 d:\projects\dftexample\fft\include\dft.h
+	<complex>
+	"RingBuffer.h"
+	"ReferenceSineWave.h"
+
+1686920522 source:d:\projects\dftexample\fft\src\convolution.cpp
+	"Convolution.h"
+
+1686920522 source:d:\projects\dftexample\fft\src\dft.cpp
+	"Dft.h"
+
+1686920522 source:d:\projects\dftexample\fft\src\fft.cpp
+	"Fft.h"
+
+1686920522 source:d:\projects\dftexample\fft\src\referencesinewave.cpp
+	"ReferenceSineWave.h"
+
+1686920522 source:d:\projects\dftexample\fft\src\signalgenerate.cpp
+	"SignalGenerate.h"
+
+1686920522 d:\projects\dftexample\fft\include\signalgenerate.h
+	<vector>
+	<array>
+	<math.h>
+	<cassert>
+
+1686920522 source:d:\projects\dftexample\fft\src\step.cpp
+	"Step.h"
+

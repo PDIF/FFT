@@ -18,6 +18,7 @@ int main()
     ReferenceSineWave a(96);
     Fft fft(a, {1, 3, 5});
 
+    /*
     std::cout << "points per period   = " << a.size() << "\n"
               << "base size           = " << a.base.size() << "\n"
               << "step degree         = " << a.step.Degree() << "\n"
@@ -50,7 +51,7 @@ int main()
     std::cout << "\n====\n";
 
 
-
+*/
 
 
 
