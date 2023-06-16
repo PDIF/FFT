@@ -144,6 +144,10 @@ void DigitalSignalProcess::_updateResult()
 
            _value[i] += _convolution[i][index];
         }
+
+        if (_harmonics[i] == 0) {
+           _value[i] *= 0.5;
+        }
     }
 };
 
@@ -189,6 +193,8 @@ complex_t DigitalSignalProcess::_initCorrection(double angle, double amplitude)
 {
     angle *= _baseSineWave.step.Radian();
     angle /= _baseSineWave.step.Degree();
+
+    amplitude *= 2.0 / _baseSineWave.getPointsPerPeriod();
 
     return amplitude * std::exp(complex_t{0, angle});
 };

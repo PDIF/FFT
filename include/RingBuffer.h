@@ -22,22 +22,26 @@ public:
     virtual ~RingBuffer()
     { };
 
+    //размер активного окна
     size_t getWindowSize()  const
     {
         return _windowSize;
     };
 
+    //полный размер буфера
     size_t getBufferSize() const
     {
         return _bufferSize;
     };
 
+    //добавление нового значения в начало буфера
     void push_front(const T& newData)
     {
        _moveCurrent();
        _data[_current] = newData;
     };
 
+    //добавление массива значений в начало буфера
     void push_front(const std::vector<T>& newData)
     {
         for (const auto & i : {newData.crbegin(), newData.crend()}) {
@@ -45,6 +49,7 @@ public:
         };
     };
 
+    //обращение к отдельному элементу массива (0 - самый новый элемент)
     T& operator[](size_t index) {
         return _data[_setBufferIndex(index)];
     };
@@ -60,8 +65,6 @@ private:
     size_t         _current     ;
     std::vector<T> _data        ;
 
-
-
     size_t _setBufferIndex(size_t index) {
 
         assert((index < _bufferSize) && "Index exceeds buffer size");
@@ -75,7 +78,6 @@ private:
         return index;
     };
 
-
     void _moveCurrent()
     {
         if (_current > 0) {
@@ -85,7 +87,6 @@ private:
 
         _current = _bufferSize - 1;
     };
-
 
     size_t _computeBufferSize(double newNumberOfPeriods) const
     {
@@ -99,8 +100,6 @@ private:
     static constexpr double defaultPeriodNumber() {
         return 1.0;
     };
-
-
 
 };
 

@@ -29,16 +29,16 @@ public:
         double       initAngleCorrection     = defaultAngleCorrection(),
         double       initAmplitudeCorrection = defaultAmplitudeCorrection());
 
-    //добавление новой величины и обновление данных
+    ///добавление новой величины и обновление данных
     void update(double newValue);
 
-    //возвращает вектор вычисленных гармоник
+    ///векторкомплексныхзначений вектора гармоник
     const complex_vec_t& value() const;
 
-    //возвращает заданную гармонику
+    ///комплексное значение заданной гармоники
     const complex_t& value(size_t harmonic) const;
 
-    //устанавливает коррекцию значений
+    ///установка коррекции значений
     void setCorrection(double angleDegree, double amplitude);
 
     //dtor
@@ -105,7 +105,7 @@ private:
     };
 
     static const size_vec_t defaultHarmonicsData() {
-        return size_vec_t{0, 1, 2, 3, 5, 6, 7, 9, 11, 12, 13};
+        return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
     };
 
 };

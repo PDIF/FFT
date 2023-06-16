@@ -108,19 +108,29 @@ class ReferenceSineWave
 
 public:
 
+    //ctor
     ReferenceSineWave(const size_t& pointsPerPeriod = defaultSize());
 
+    ///блок вычисления шага между двумя смежными точками
     Step        step;
+
+    ///блок эталонной базы для расчета первичного преобразования
     Base        base;
+
+    ///блок свертки для дальнейшего использования ранее посчитанных величин
     Convolution convolution;
 
+    ///число точек на период
     size_t      getPointsPerPeriod()    const;
 
+    ///обращение к отдельному элементу эталонного массива
     const
     complex_t&  operator[](size_t position) const;
 
+    ///изменение размера эталонного массива
     void        update(const size_t& newPointsPerPeriod);
 
+    //dtor
     virtual    ~ReferenceSineWave();
 
 

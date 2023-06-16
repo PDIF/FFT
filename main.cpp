@@ -1,5 +1,9 @@
 #include <iostream>
 
+
+//#include <istream>
+#include <fstream>
+
 //#include <cmath>
 #include <complex>
 
@@ -12,29 +16,9 @@ using namespace std;
 
 int main()
 {
-    cout << "Hello world!" << endl;
-
-    RingBuffer<double> f(5, 2.0);
-
-    f.push_front(10);
-    f.push_front(9);
-    f.push_front(8);
-    f.push_front(7);
-    f.push_front(6);
-    f.push_front(5);
-
-    for (int i = 0; i < 4; ++i) {
-        std::cout << f[i] << " ";
-    }
-    std::cout << "\n\n";
-
-
     ReferenceSineWave a(96);
 
-    DigitalSignalProcess b(a, {0,1,2,3,4,5,6,7}, 0, 0.25);
-
-
-    a.update(8);
+    DigitalSignalProcess b(a);
 
     std::cout << "points per period   = " << a.getPointsPerPeriod() << "\n"
               << "base size           = " << a.base.size() << "\n"
@@ -74,191 +58,35 @@ int main()
 
     std::cout << "step: " << a.base.length() << " " << a.convolution.length() << "\n";
 
-size_t harm = 1;
+    std::ifstream reading("values");
+    std::string line;
 
-/*
-    b.update(2);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-2);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-*/
-
-/*
-    b.update(3);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.707107);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-0.707107);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-3);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-0.707107);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.707107);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-*/
+    std::vector<double> data;
 
 
+    while (std::getline(reading, line))
+    {
+        data.push_back(stod(line));
+    };
 
-    b.update(12);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-//std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(12);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
+    reading.close();
 
-    b.update(12);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
+    for(auto i : data) {
+        b.update(i);
+    }
 
-
-b.update(12);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-
-
-b.update(12);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-
-
-b.update(12);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-
-
-b.update(12);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(6);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0.2929);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(9);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.7071);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-
-/*
-
-
-    b.update(2);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-2);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(-1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(0);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-    b.update(1.414214);
-std::cout << "current: " << b.value(harm) << " \t" << std::abs(b.value(harm)) << "\n";
-*/
-    a.update(96);
+    std::cout << "0 : " << abs(b.value(0)) << "\n";
+    std::cout << "1 : " << abs(b.value(1)) << "\n";
+    std::cout << "2 : " << abs(b.value(2)) << "\n";
+    std::cout << "3 : " << abs(b.value(3)) << "\n";
+    std::cout << "4 : " << abs(b.value(4)) << "\n";
+    std::cout << "5 : " << abs(b.value(5)) << "\n";
+    std::cout << "6 : " << abs(b.value(6)) << "\n";
+    std::cout << "7 : " << abs(b.value(7)) << "\n";
+    std::cout << "9 : " << abs(b.value(9)) << "\n";
+    std::cout << "11: " << abs(b.value(11)) << "\n";
+    std::cout << "12: " << abs(b.value(12)) << "\n";
+    std::cout << "13: " << abs(b.value(13)) << "\n";
 
     return 0;
 }

@@ -8,9 +8,9 @@ using size_matrix_t  = std::vector<size_vec_t>;
 ReferenceSineWave::ReferenceSineWave(const size_t& initPointsPerPeriod)
 : _pointsPerPeriod    (initPointsPerPeriod)
 , _fullPrimeFactor    (_computeFullPrimeFactor())
-, step(Step(initPointsPerPeriod))
-, base(Base(initPointsPerPeriod, _fullPrimeFactor.back()))
-, convolution(Convolution(initPointsPerPeriod))
+,  step(Step(initPointsPerPeriod))
+,  base(Base(initPointsPerPeriod, _fullPrimeFactor.back()))
+,  convolution(Convolution(initPointsPerPeriod))
 , _sineWaveData       (_computeSineWave())
 { };
 
