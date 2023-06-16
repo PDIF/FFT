@@ -124,15 +124,16 @@
 	<vector>
 	<assert.h>
 
-1686896337 source:/Data/Projects/DFTExample/main.cpp
+1686918400 source:/Data/Projects/DFTExample/main.cpp
 	<iostream>
 	<fstream>
 	<complex>
-	"DigitalSignalProcess.h"
-	"RingBuffer.h"
+	"Fft.h"
+	"Dft.h"
+	<ctime>
 	"ReferenceSineWave.h"
 
-1686896337 /Data/Projects/DFTExample/include/DigitalSignalProcess.h
+1686917480 /Data/Projects/DFTExample/include/DigitalSignalProcess.h
 	<complex>
 	<vector>
 	<algorithm>
@@ -141,7 +142,7 @@
 	"ReferenceSineWave.h"
 	"RingBuffer.h"
 
-1686833100 /Data/Projects/DFTExample/include/ReferenceSineWave.h
+1686912832 /Data/Projects/DFTExample/include/ReferenceSineWave.h
 	<complex>
 	<vector>
 	"RingBuffer.h"
@@ -149,14 +150,14 @@
 	"Convolution.h"
 	"Step.h"
 
-1686812522 /Data/Projects/DFTExample/include/RingBuffer.h
+1686906377 /Data/Projects/DFTExample/include/RingBuffer.h
 	<vector>
 	<assert.h>
 
-1686895913 source:/Data/Projects/DFTExample/src/DigitalSignalProcess.cpp
+1686912832 source:/Data/Projects/DFTExample/src/DigitalSignalProcess.cpp
 	"DigitalSignalProcess.h"
 
-1686894582 source:/Data/Projects/DFTExample/src/ReferenceSineWave.cpp
+1686913053 source:/Data/Projects/DFTExample/src/ReferenceSineWave.cpp
 	"ReferenceSineWave.h"
 
 1684914574 source:/Data/Projects/DFTExample/src/SignalGenerate.cpp
@@ -168,7 +169,7 @@
 	<math.h>
 	<cassert>
 
-1686862250 /Data/Projects/DFTExample/include/Convolution.h
+1686902826 /Data/Projects/DFTExample/include/Convolution.h
 	<vector>
 	<assert.h>
 
@@ -181,4 +182,24 @@
 
 1686832932 source:/Data/Projects/DFTExample/src/Step.cpp
 	"Step.h"
+
+1686913953 source:/Data/Projects/DFTExample/src/Dft.cpp
+	"Dft.h"
+
+1686918212 /Data/Projects/DFTExample/include/Dft.h
+	<complex>
+	"RingBuffer.h"
+	"ReferenceSineWave.h"
+
+1686917966 /Data/Projects/DFTExample/include/Fft.h
+	<complex>
+	<vector>
+	<algorithm>
+	<assert.h>
+	<iostream>
+	"ReferenceSineWave.h"
+	"RingBuffer.h"
+
+1686917966 source:/Data/Projects/DFTExample/src/Fft.cpp
+	"Fft.h"
 

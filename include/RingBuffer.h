@@ -22,26 +22,26 @@ public:
     virtual ~RingBuffer()
     { };
 
-    //размер активного окна
+    ///размер активного окна данных
     size_t getWindowSize()  const
     {
         return _windowSize;
     };
 
-    //полный размер буфера
+    ///полный размер буфера
     size_t getBufferSize() const
     {
         return _bufferSize;
     };
 
-    //добавление нового значения в начало буфера
+    ///добавление нового значения в начало буфера
     void push_front(const T& newData)
     {
        _moveCurrent();
        _data[_current] = newData;
     };
 
-    //добавление массива значений в начало буфера
+    ///добавление массива значений в начало буфера
     void push_front(const std::vector<T>& newData)
     {
         for (const auto & i : {newData.crbegin(), newData.crend()}) {
@@ -49,7 +49,7 @@ public:
         };
     };
 
-    //обращение к отдельному элементу массива (0 - самый новый элемент)
+    ///обращение к отдельному элементу массива (0 - самый новый элемент)
     T& operator[](size_t index) {
         return _data[_setBufferIndex(index)];
     };

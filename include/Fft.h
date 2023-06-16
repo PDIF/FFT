@@ -1,5 +1,5 @@
-#ifndef DIGITALSIGNALPROCESS_H
-#define DIGITALSIGNALPROCESS_H
+#ifndef Fft_H
+#define Fft_H
 
 #include <complex>
 #include <vector>
@@ -11,7 +11,7 @@
 #include "ReferenceSineWave.h"
 #include "RingBuffer.h"
 
-class DigitalSignalProcess
+class Fft
 {
     using base_wave_t    = const ReferenceSineWave;
     using size_vec_t     = std::vector<size_t>;
@@ -23,7 +23,7 @@ class DigitalSignalProcess
 public:
 
     //ctor
-    DigitalSignalProcess(
+    Fft(
         const base_wave_t& initReferenceSineWave,
         const size_vec_t&  initHarmonics     = defaultHarmonicsData(),
         double       initAngleCorrection     = defaultAngleCorrection(),
@@ -32,7 +32,7 @@ public:
     ///добавление новой величины и обновление данных
     void update(double newValue);
 
-    ///векторкомплексныхзначений вектора гармоник
+    ///вектор комплексных значений вектора гармоник
     const complex_vec_t& value() const;
 
     ///комплексное значение заданной гармоники
@@ -42,7 +42,7 @@ public:
     void setCorrection(double angleDegree, double amplitude);
 
     //dtor
-    virtual ~DigitalSignalProcess();
+    virtual ~Fft();
 
 
 private:
@@ -106,10 +106,11 @@ private:
 
     static const size_vec_t defaultHarmonicsData() {
         return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
+        //return size_vec_t{1};
     };
 
 };
 
 
 
-#endif // DIGITALSIGNALPROCESS_H
+#endif // Fft_H

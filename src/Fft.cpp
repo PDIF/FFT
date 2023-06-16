@@ -1,4 +1,4 @@
-#include "DigitalSignalProcess.h"
+#include "Fft.h"
 
 using base_wave_t    = const ReferenceSineWave;
 using size_vec_t     = std::vector<size_t>;
@@ -8,7 +8,7 @@ using ring_complex_t = RingBuffer<complex_t>;
 using ring_base_t    = std::vector<ring_complex_t>;
 
 
-DigitalSignalProcess::DigitalSignalProcess(
+Fft::Fft(
         const base_wave_t& initReferenceSineWave,
         const size_vec_t&  initHarmonics        ,
         double             initAngleDegree      ,
@@ -25,12 +25,12 @@ DigitalSignalProcess::DigitalSignalProcess(
     //ctor
 };
 
-DigitalSignalProcess::~DigitalSignalProcess()
+Fft::~Fft()
 {
     //dtor
 }
 
-void DigitalSignalProcess::update(double newValue)
+void Fft::update(double newValue)
 {
     complex_t complexValue(_valueCorrection * newValue);
 
@@ -41,13 +41,13 @@ void DigitalSignalProcess::update(double newValue)
 };
 
 
-const complex_vec_t& DigitalSignalProcess::value() const
+const complex_vec_t& Fft::value() const
 {
     return _value;
 };
 
 
-const complex_t& DigitalSignalProcess::value(size_t harmonic) const
+const complex_t& Fft::value(size_t harmonic) const
 {
     auto itFind =  std::find(_harmonics.begin(), _harmonics.end(), harmonic);
 
@@ -61,13 +61,13 @@ const complex_t& DigitalSignalProcess::value(size_t harmonic) const
 };
 
 
-void DigitalSignalProcess::setCorrection(double angleDegree, double amplitude)
+void Fft::setCorrection(double angleDegree, double amplitude)
 {
     _valueCorrection = _initCorrection(angleDegree, amplitude);
 };
 
 
-size_vec_t DigitalSignalProcess::_initNodes()
+size_vec_t Fft::_initNodes()
 {
     size_vec_t  tmpNodes;
 
@@ -84,20 +84,20 @@ size_vec_t DigitalSignalProcess::_initNodes()
 };
 
 
-complex_vec_t DigitalSignalProcess::_initComplexVector(size_t newSize)
+complex_vec_t Fft::_initComplexVector(size_t newSize)
 {
     return complex_vec_t(newSize, _defaultComplex);
 };
 
 
-ring_base_t DigitalSignalProcess::_initConvolution(size_t newSize)
+ring_base_t Fft::_initConvolution(size_t newSize)
 {
     size_t length = _baseSineWave.convolution.length();
     return ring_base_t(newSize, ring_complex_t(length, 1.0));
 };
 
 
-ring_base_t DigitalSignalProcess::_initBase()
+ring_base_t Fft::_initBase()
 {
     size_t matrixSize   = _baseSineWave.base.size();
     size_t matrixLength = _baseSineWave.base.length();
@@ -107,7 +107,7 @@ ring_base_t DigitalSignalProcess::_initBase()
 };
 
 
-void DigitalSignalProcess::_updateCurrent(const complex_t& newValue)
+void Fft::_updateCurrent(const complex_t& newValue)
 {
     for (size_t i = 0; i < _harmonics.size(); ++i) {
 
@@ -125,7 +125,7 @@ void DigitalSignalProcess::_updateCurrent(const complex_t& newValue)
 };
 
 
-void DigitalSignalProcess::_updateBase(complex_t newValue)
+void Fft::_updateBase(complex_t newValue)
 {
     for (auto& harmonic : _base) {
         harmonic.push_front(newValue);
@@ -134,7 +134,7 @@ void DigitalSignalProcess::_updateBase(complex_t newValue)
 };
 
 
-void DigitalSignalProcess::_updateResult()
+void Fft::_updateResult()
 {
     for (size_t i = 0; i < _harmonics.size(); ++i) {
 
@@ -152,7 +152,7 @@ void DigitalSignalProcess::_updateResult()
 };
 
 
-void DigitalSignalProcess::_updateConvolution()
+void Fft::_updateConvolution()
 {
     const auto& convolutionBase = _baseSineWave.convolution;
 
@@ -179,7 +179,7 @@ void DigitalSignalProcess::_updateConvolution()
                 current      += convolutionCurr[index];
 
                 degree  =  convolutionBase.degrees()[j + 1] * harmonic;
-                degree %= _baseSineWave.getPointsPerPeriod();
+                degree %= _baseSineWave.size();
 
                 convolutionCurr[index] = current * _baseSineWave[degree];
             }
@@ -189,12 +189,12 @@ void DigitalSignalProcess::_updateConvolution()
 };
 
 
-complex_t DigitalSignalProcess::_initCorrection(double angle, double amplitude)
+complex_t Fft::_initCorrection(double angle, double amplitude)
 {
     angle *= _baseSineWave.step.Radian();
     angle /= _baseSineWave.step.Degree();
 
-    amplitude *= 2.0 / _baseSineWave.getPointsPerPeriod();
+    amplitude *= 2.0 / _baseSineWave.size();
 
     return amplitude * std::exp(complex_t{0, angle});
 };

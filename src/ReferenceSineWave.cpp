@@ -15,7 +15,7 @@ ReferenceSineWave::ReferenceSineWave(const size_t& initPointsPerPeriod)
 { };
 
 
-size_t ReferenceSineWave::getPointsPerPeriod() const
+size_t ReferenceSineWave::size() const
 {
     return _pointsPerPeriod;
 };

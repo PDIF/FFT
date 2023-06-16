@@ -39,14 +39,16 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="include/Convolution.h" />
-		<Unit filename="include/DigitalSignalProcess.h" />
+		<Unit filename="include/Dft.h" />
+		<Unit filename="include/Fft.h" />
 		<Unit filename="include/ReferenceSineWave.h" />
 		<Unit filename="include/RingBuffer.h" />
 		<Unit filename="include/SignalGenerate.h" />
 		<Unit filename="include/Step.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Convolution.cpp" />
-		<Unit filename="src/DigitalSignalProcess.cpp" />
+		<Unit filename="src/Dft.cpp" />
+		<Unit filename="src/Fft.cpp" />
 		<Unit filename="src/ReferenceSineWave.cpp" />
 		<Unit filename="src/SignalGenerate.cpp" />
 		<Unit filename="src/Step.cpp" />

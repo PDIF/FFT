@@ -121,7 +121,7 @@ public:
     Convolution convolution;
 
     ///число точек на период
-    size_t      getPointsPerPeriod()    const;
+    size_t      size()    const;
 
     ///обращение к отдельному элементу эталонного массива
     const
