@@ -1,16 +1,19 @@
 #include "Dft.h"
 
-using base_wave_t    = const ReferenceSineWave;
-using complex_t      = std::complex<double>;
-using ring_complex_t = RingBuffer<complex_t>;
+using complex_t   = std::complex<double>;
+using base_wave_t = BaseSineWave;
+using size_vec_t  = std::vector<size_t>;
 
-Dft::Dft(const base_wave_t& initReferenceSineWave)
-: _baseSineWave  (initReferenceSineWave)
-, _data(_initData(initReferenceSineWave.size()))
-, _valueCorrection(_initCorrection(0.0, 1.0))
+Dft::Dft(
+    const base_wave_t* initBaseSineWave,
+    const size_vec_t&  initHarmonics,
+    double             initAngle,
+    double             initAmplitude)
+:  FourierTransform(initBaseSineWave, initHarmonics, initAngle, initAmplitude)
 {
     //ctor
-}
+};
+
 
 Dft::~Dft()
 {
@@ -21,36 +24,37 @@ Dft::~Dft()
 
 void Dft::update(double newValue)
 {
-    complex_t complexValue(_valueCorrection * newValue);
+    if (!FourierTransform::isValid()) {
+        return;
+    };
 
-   _data.push_front(complexValue);
+    complex_t complexValue(FourierTransform::_correction * newValue);
 
-   _result = complexValue;
+   _instant.push_front(complexValue);
 
-    for (size_t i = 1; i < _baseSineWave.size(); ++i) {
-       _result += _baseSineWave[i] * _data[i];
-    }
+    for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
+        size_t harmonic = FourierTransform::_harmonics[i];
+
+       _result[i] = _instant[0];
+
+        for (size_t j = 1; j < _baseSineWave->size(); ++j) {
+
+             size_t _position = j * harmonic % _baseSineWave->size();
+
+            _result[i] += _instant[j] * (*_baseSineWave)[_position];
+        };
+    };
 };
 
 
-const complex_t& Dft::value() const
+void Dft::setNewBase(const base_wave_t* newBaseSineWave)
 {
-    return _result;
+    FourierTransform::setNewBase(newBaseSineWave);
+};
+
+
+void Dft::setNewHarmonicalSet(const size_vec_t& newSet)
+{
+    FourierTransform::setNewHarmonicalSet(newSet);
 }
 
-
-complex_t Dft::_initCorrection(double angle, double amplitude)
-{
-    angle *= _baseSineWave.step.Radian();
-    angle /= _baseSineWave.step.Degree();
-
-    amplitude *= 2.0 / _baseSineWave.size();
-
-    return amplitude * std::exp(complex_t{0, angle});
-};
-
-
-ring_complex_t Dft::_initData(size_t dataSize)
-{
-    return ring_complex_t (dataSize, 1.0);
-};

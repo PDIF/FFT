@@ -1,40 +1,45 @@
 #ifndef DFT_H
 #define DFT_H
 
-#include <complex>
-#include "RingBuffer.h"
-#include "ReferenceSineWave.h"
+//#include "RingBuffer.h"
+#include "FourierTransform.h"
 
-class Dft
+class Dft : public FourierTransform
 {
-    using base_wave_t    = const ReferenceSineWave;
-    using complex_t      = std::complex<double>;
-    using ring_complex_t = RingBuffer<complex_t>;
+    using complex_t   = std::complex<double>;
+    using base_wave_t = BaseSineWave;
+    using size_vec_t  = std::vector<size_t>;
 
 public:
-    Dft(const base_wave_t& initReferenceSineWave);
+
+    Dft(const base_wave_t* initBaseSineWave = nullptr,
+        const size_vec_t&  initHarmonics    = defaultHarmonicsDft(),
+        double             initnAngle       = defaultZero(),
+        double             initAmplitude    = defaultOne());
+
     virtual ~Dft();
 
-    ///добавление новой величины и обновление данных
-    void update(double newValue);
+    ///Добавление новой величины и обновление данных
+    void update(double newValue) override;
 
-    ///комплексное значение
-    const complex_t& value() const;
+
+    ///Переключение на новую эталонную синусоиду
+    void setNewBase(const BaseSineWave* newBaseSineWave) override;
+
+
+    ///Установка набора вычисляемых гармоник
+    virtual void setNewHarmonicalSet(const size_vec_t& newSet) override;
+
 
 private:
 
-    //ссылка на эталонную синусоиду
-    base_wave_t&   _baseSineWave;
+    //========
+    // Методы
+    //========
 
-    ring_complex_t _data;
-
-    complex_t      _valueCorrection;
-
-    complex_t      _result;
-
-    ring_complex_t _initData(size_t);
-
-    complex_t      _initCorrection(double angle, double amplitude);
+    static const size_vec_t defaultHarmonicsDft() {
+        return size_vec_t{1, 3};
+    };
 
 };
 

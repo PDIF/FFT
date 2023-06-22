@@ -10,11 +10,10 @@ template <typename T>
 class RingBuffer
 {
 public:
-    RingBuffer(
-        const size_t& initWindowSize,
-        const double& initNumberOfPeriods = defaultPeriodNumber())
-    : _windowSize(initWindowSize)
-    , _bufferSize(_computeBufferSize(initNumberOfPeriods))
+
+    ///Конструктор
+    RingBuffer(size_t initBufferSize)
+    : _bufferSize(initBufferSize)
     , _current   (defaultCurrent())
     , _data      (std::vector<T>(_bufferSize, static_cast<T>(0)))
     { };
@@ -22,26 +21,28 @@ public:
     virtual ~RingBuffer()
     { };
 
-    ///размер активного окна данных
-    size_t getWindowSize()  const
+    ///Переназначение размеров буфера
+    void setBuffer(size_t newBufferSize)
     {
-        return _windowSize;
+        _bufferSize =  newBufferSize;
+        _current    =  defaultCurrent();
+        _data       =  std::vector<T>(_bufferSize, static_cast<T>(0));
     };
 
-    ///полный размер буфера
-    size_t getBufferSize() const
+    ///Размер буфера
+    size_t size()  const
     {
         return _bufferSize;
     };
 
-    ///добавление нового значения в начало буфера
+    ///Добавление нового значения в начало буфера
     void push_front(const T& newData)
     {
        _moveCurrent();
        _data[_current] = newData;
     };
 
-    ///добавление массива значений в начало буфера
+    ///Добавление массива значений в начало буфера
     void push_front(const std::vector<T>& newData)
     {
         for (const auto & i : {newData.crbegin(), newData.crend()}) {
@@ -49,7 +50,7 @@ public:
         };
     };
 
-    ///обращение к отдельному элементу массива (0 - самый новый элемент)
+    ///Обращение к отдельному элементу массива (0 - самый новый элемент)
     T& operator[](size_t index) {
         return _data[_setBufferIndex(index)];
     };
@@ -60,10 +61,9 @@ public:
 
 private:
 
-    size_t         _windowSize  ;
-    size_t         _bufferSize  ;
-    size_t         _current     ;
-    std::vector<T> _data        ;
+    size_t         _bufferSize;
+    size_t         _current;
+    std::vector<T> _data;
 
     size_t _setBufferIndex(size_t index) {
 
@@ -72,7 +72,7 @@ private:
         index += _current;
         if (index < _bufferSize) {
             return index;
-        }
+        };
 
         index -= _bufferSize;
         return index;
@@ -85,21 +85,12 @@ private:
             return;
         };
 
-        _current = _bufferSize - 1;
-    };
-
-    size_t _computeBufferSize(double newNumberOfPeriods) const
-    {
-        return static_cast<size_t>(newNumberOfPeriods * _windowSize);
+       _current = _bufferSize - 1;
     };
 
     static constexpr size_t defaultCurrent() {
         return 0;
-    };
-
-    static constexpr double defaultPeriodNumber() {
-        return 1.0;
-    };
+    }
 
 };
 
