@@ -1,5 +1,6 @@
 #include "Fft.h"
 
+
 using base_wave_t    = const ReferenceSineWave;
 using size_vec_t     = std::vector<size_t>;
 using complex_t      = std::complex<double>;
@@ -14,14 +15,11 @@ Fft::Fft(
     double             initAngle,
     double             initAmplitude)
 :  FourierTransform(initBaseSineWave, initHarmonics, initAngle, initAmplitude)
-//: _baseSineWave   ( initReferenceSineWave)
-//, _harmonics      ( initHarmonics)
-//, _base           (_initBase())
-//, _convolution    (_initConvolution(initHarmonics.size()))
-//, _current        (_initComplexVector(initHarmonics.size()))
-//, _value          (_initComplexVector(initHarmonics.size()))
-//, _valueCorrection(_initCorrection(initAngleDegree, initAmplitude))
-, _defaultComplex ( zeroComplex())
+, _convolution(Convolution(initBaseSineWave))
+, _base(Base(initBaseSineWave))
+, _baseData     (ring_base_t(_base.size(), ring_complex_t((_base.size() - 1) * _base.step())))
+, _convolutionData(ring_base_t(_harmonics.size(), ring_complex_t(_convolution.length())))
+, _resultBase(complex_vec_t(_base.size()))
 {
     //ctor
 };
@@ -37,39 +35,35 @@ void Fft::update(double newValue)
         return;
     };
 
-    complex_t complexValue(FourierTransform::_correction * newValue);
+    //complex_t complexValue(FourierTransform::_correction * newValue);
 
-    for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
-        size_t harmonic = FourierTransform::_harmonics[i];
+    complex_t complexValue(newValue);
 
-       _result[i] = _result[i] * (*_baseSineWave)[harmonic] -
-                    _instant[_baseSineWave->size() - 1] + complexValue;
-    }
 
+    _updateBase(complexValue);
+
+    _updateResult();
 
 
    _instant.push_front(complexValue);
 
 
-
-
-
-/*
-
-    complex_t complexValue(_valueCorrection * newValue);
-
-    _updateCurrent(complexValue);
-    _updateBase(complexValue);
-    _updateResult();
-    _updateConvolution();
-    */
 };
 
 
-const complex_vec_t& Fft::value() const
+void Fft::setNewBase(const base_wave_t* newBaseSineWave)
 {
-    return _value;
+    FourierTransform::setNewBase(newBaseSineWave);
 };
+
+
+void Fft::setNewHarmonicalSet(const size_vec_t& newSet)
+{
+    FourierTransform::setNewHarmonicalSet(newSet);
+};
+
+
+
 
 /*
 const complex_t& Fft::value(size_t harmonic) const

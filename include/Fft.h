@@ -1,6 +1,7 @@
 #ifndef Fft_H
 #define Fft_H
 
+
 #include <complex>
 #include <vector>
 #include <algorithm>
@@ -13,6 +14,7 @@
 
 
 #include "FourierTransform.h"
+
 
 class Fft : public FourierTransform
 {
@@ -72,6 +74,7 @@ class Fft : public FourierTransform
 
         Convolution(const base_wave_t* initBaseSineWave)
         : _position(_computePosition(initBaseSineWave))
+        , _expand  (_computeExpand(_position))
         { };
 
         ///Общий размер вектора для хранения значений свертки
@@ -141,6 +144,7 @@ class Fft : public FourierTransform
             for (const auto& data : inputPosition) {
                 for (size_t i = 0; i < data.size(); ++i) {
                     tmpExpand.push_back(data[i]);
+                    std::cout << data[i] << " ";
                 };
             };
 
@@ -246,16 +250,13 @@ public:
     void update(double newValue) override;
 
 
+    ///Переключение на новую эталонную синусоиду
+    virtual void setNewBase(const base_wave_t* newBaseSineWave) override;
 
 
-    ///Вектор комплексных значений вектора гармоник
-    const complex_vec_t& value() const;
+    ///Установка набора вычисляемых гармоник
+    virtual void setNewHarmonicalSet(const size_vec_t& newSet) override;
 
-    ///комплексное значение заданной гармоники
-    const complex_t& value(size_t harmonic) const;
-
-    ///установка коррекции значений
-    void setCorrection(double angleDegree, double amplitude);
 
     //dtor
     virtual ~Fft();
@@ -282,51 +283,44 @@ private:
 
 
     ///Обновление элементов базы
-    void _updateBase(complex_t newValue) {
-
-        complex_t complexValue(FourierTransform::_correction * newValue);
-
-
-        //Добавление нового значения в матрицу базы
-        size_t _degree = 0;
-
-        for (auto& degree : _baseData) {
-
-            degree.push_front(complexValue * (*_baseSineWave)[_degree]);
-           _degree += _base.step();
-        };
-
+    void _updateBase(const complex_t& newValue) {
 
         //Обновление результатов расчета базы
         for (size_t i = 0; i < _base.size(); ++i) {
 
-            size_t baseColumn = 0;
+           _resultBase[i]    =  newValue;
+            size_t column    = _base.step() - 1;
+            const auto& rows = _base[i];
 
-           _resultBase[i] = _baseData[0][baseColumn];
-
-            for (size_t j = 0; j + 1 < _base.size(); ++j) {
-
-                baseColumn    += _base.step();
-                size_t baseRow = _base[i][j];
-               _resultBase[i] += _baseData[baseRow][baseColumn];
+            for (const auto& row : rows) {
+               _resultBase[i] += _baseData[row][column];
+                column        += _base.step();
             };
+        };
+
+        //Добавление нового значения в матрицу базы
+        size_t _degree = 0;
+
+        for (auto& baseRow : _baseData) {
+            baseRow.push_front(newValue * _baseSineWave->operator[](_degree));
+           _degree += _base.step();
         };
     };
 
 
-    ///Обновление вектора результатов вычисления гармоник
+    ///Обновление вектора результатов вычисления гармоник и матрицы свертки
     void _updateResult() {
 
         //Обновление результатов расчета гармоник
         for (size_t i = 0; i < _harmonics.size(); ++i) {
 
             size_t harmonic = _harmonics[i];
-           _result[i] = _resultBase[harmonic % _base.size()];
-
+            auto&  result   = _result[i];
+            auto&  source   = _convolutionData[i];
+            result = _resultBase[harmonic % _base.size()];
 
             for (const auto& position : _convolution.expand()) {
-
-                _result[i] += _convolutionData[i][position];
+                result += source[position];
             };
         };
 
@@ -334,73 +328,106 @@ private:
         //Обновление матрицы свертки
         for (size_t i = 0; i < _harmonics.size(); ++i) {
 
-            size_t harmonic = _harmonics[i];
+            size_t harmonic   = _harmonics[i];
+            auto&  source     = _convolutionData[i];
+
+            complex_t tmpBase = _resultBase[harmonic % _base.size()];
+            complex_t adding  =  tmpBase * _baseSineWave->operator[](harmonic);
 
             for (size_t j = 0; j + 1 < _convolution.size(); ++j) {
+
                 for (size_t k = 0; k + 1 < _convolution[j].size(); ++k) {
 
-                    size_t degree = _convolution[j].degree  *
-                                     harmonic               %
+                    size_t degree = _convolution[j].degree * harmonic %
                                     _baseSineWave->size();
-
-                   _convolution[j][k] *= (*_baseSineWave)[degree];
+                    auto ppp = _convolution[j][k];
+                    //tmpBase      +=  source[k];
+                    tmpBase      +=  source[ppp];
+                    //source[k]    *= _baseSineWave->operator[](degree);
+                    source[ppp]    *= _baseSineWave->operator[](degree);
                 };
 
-                size_t degree = _convolution[j].degree  *
+                //tmpBase      += source[_convolution[j].size() - 1];
+
+                size_t degree = _convolution[j + 1].degree * harmonic %
+                                _baseSineWave->size();
+
+                auto ppp = _convolution[j][_convolution[j].size() - 1];
+                //source[_convolution[j].size() - 1] = tmpBase * (*_baseSineWave)[degree];
+                source[ppp] = tmpBase * _baseSineWave->operator[](degree);
+
+            };
 
 
 
-            }
-        _convolutionData
 
-        }
+            size_t degree = _convolution[_convolution.size() - 1].degree * harmonic %
+                                _baseSineWave->size();
+
+            for (size_t k = 0; k + 1 < _convolution[_convolution.size() - 1].size(); ++k) {
+
+
+               //_convolutionData[_convolution.size() - 1][k] *= (*_baseSineWave)[degree];
+
+
+
+               //_convolutionData[i][_convolution[_convolution.size() - 1][_convolution[_convolution.size() - 1].size() - 1]
+               auto ppp = _convolution[_convolution.size() - 1][k];
+
+               source[ppp] *= _baseSineWave->operator[](degree);
+
+            };
+
+            source.push_front(adding);// * (*_baseSineWave)[harmonic]);
+
+        };
     };
 
-/*
-
-    //ссылка на эталонную синусоиду
-    //base_wave_t&    _baseSineWave;
-
-    //вектор искомых гармоник
-    size_vec_t      _harmonics;
-
-    //матрица значений, умноженных на комплексы эталонной синусоиды
-    ring_base_t     _base;
-
-    //матрица сверток по гармоникам
-    ring_base_t     _convolution;
-
-    //вектор модготовленных мгновенных значений по гармоникам
-    complex_vec_t   _current;
-
-    //результат ЦОС (вектор искомых значений по гармоникам)
-    complex_vec_t   _value;
-
-    //множитель коррекции новой (входящей) величины
-    complex_t       _valueCorrection;
-
-    //дефолтное нулевое комплексное значение
-    const complex_t _defaultComplex;
 
 
-    //Методы
-    size_vec_t      _initNodes();
-
-    complex_vec_t   _initComplexVector(size_t newSize);
-
-    ring_base_t     _initConvolution(size_t newSize);
-
-    ring_base_t     _initBase();
-
-    complex_t       _initCorrection(double angle, double amplitude);
-
-    void            _updateCurrent(const complex_t& newValue);
-
-    void            _updateBase(complex_t newValue);
-
-    void            _updateResult();
-
-    void            _updateConvolution();
+//    //ссылка на эталонную синусоиду
+//    //base_wave_t&    _baseSineWave;
+//
+//    //вектор искомых гармоник
+//    size_vec_t      _harmonics;
+//
+//    //матрица значений, умноженных на комплексы эталонной синусоиды
+//    ring_base_t     _base;
+//
+//    //матрица сверток по гармоникам
+//    ring_base_t     _convolution;
+//
+//    //вектор модготовленных мгновенных значений по гармоникам
+//    complex_vec_t   _current;
+//
+//    //результат ЦОС (вектор искомых значений по гармоникам)
+//    complex_vec_t   _value;
+//
+//    //множитель коррекции новой (входящей) величины
+//    complex_t       _valueCorrection;
+//
+//    //дефолтное нулевое комплексное значение
+//    const complex_t _defaultComplex;
+//
+//
+//    //Методы
+//    size_vec_t      _initNodes();
+//
+//    complex_vec_t   _initComplexVector(size_t newSize);
+//
+//    ring_base_t     _initConvolution(size_t newSize);
+//
+//    ring_base_t     _initBase();
+//
+//    complex_t       _initCorrection(double angle, double amplitude);
+//
+//    void            _updateCurrent(const complex_t& newValue);
+//
+//    void            _updateBase(complex_t newValue);
+//
+//    void            _updateResult();
+//
+//    void            _updateConvolution();
 
 
     static constexpr double defaultAngleCorrection() {
@@ -416,7 +443,7 @@ private:
     };
 
 
-*/
+
 
 
 

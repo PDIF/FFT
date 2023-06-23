@@ -21,7 +21,7 @@ FourierTransform::FourierTransform(
 , _valid       ( Valid(initBaseSineWave))
 {
     //ctor
-}
+};
 
 
 FourierTransform::~FourierTransform()

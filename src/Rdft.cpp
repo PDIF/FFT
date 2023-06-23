@@ -55,7 +55,6 @@ void Rdft::update(double newValue)
 void Rdft::setNewBase(const base_wave_t* newBaseSineWave)
 {
     FourierTransform::setNewBase(newBaseSineWave);
-//   _instant          = _initInstant(newBaseSineWave);
    _rotateStep   =  RotateStep(newBaseSineWave);
    _rotateFactor = _computeCorrectionFactor();
 };

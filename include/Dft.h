@@ -1,7 +1,7 @@
 #ifndef DFT_H
 #define DFT_H
 
-//#include "RingBuffer.h"
+#include "RingBuffer.h"
 #include "FourierTransform.h"
 
 class Dft : public FourierTransform
@@ -44,3 +44,4 @@ private:
 };
 
 #endif // DFT_H
+

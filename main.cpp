@@ -17,7 +17,9 @@ using namespace std;
 
 int main()
 {
-    std::ifstream reading("values 4");
+auto startTime = clock();
+
+    std::ifstream reading("values 1");
     std::string   line;
     std::vector<double> data;
 
@@ -28,27 +30,33 @@ int main()
     };
     reading.close();
 
+auto endTime = clock();
+std::cout << "Reading time: " << endTime - startTime << "\n";
 
     //std::ofstream writing("result");
 
 
+startTime = clock();
 
     ReferenceSineWave a(96);
 
-    BaseSineWave bbb(96);
+    BaseSineWave bbb(8);
     BaseSineWave ccc(96);
 
     RingBuffer<std::complex<double>> storeData(96);
 
+endTime = clock();
+std::cout << "Preparing sine wave time: " << endTime - startTime << "\n";
 
+startTime = clock();
     //Fft fft(a, {1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13});
-//    Fft fft(&bbb, {1, 2, 3});
-    Dft dft(&bbb, {1});
+    Fft fft(&bbb, {1});
+    Dft dft(&bbb, {1, 2, 3});
     Rdft rdft(&bbb);
     //Rdft rdft;
-    bbb.update(80);
-    rdft.setNewBase(&ccc);
-    dft.setNewBase(&ccc);
+    //bbb.update(80);
+    //rdft.setNewBase(&ccc);
+    //dft.setNewBase(&ccc);
 
 /*
     for(auto i : data) {
@@ -63,36 +71,41 @@ int main()
     //writing.close();
 */
 
+endTime = clock();
+std::cout << "Preparing objects time: " << endTime - startTime << "\n\n";
+
+
     size_t harmonic = 1;
 
 
-    auto startTime = clock();
-    /*
+startTime = clock();
+
     for(auto i : data) {
-//        fft.update(i);
+        fft.update(i);
     }
-    std::cout << "fft :\t" << fft.value(harmonic) << "\t" << abs(fft.value(harmonic)) << "\n";
-    */
+    std::cout << "fft :\t" << fft.getData(harmonic) << "\t" << abs(fft.getData(harmonic)) << "\n";
 
-    auto endTime = clock();
-    /*
-    std::cout << "TotalTime FFT: " << endTime - startTime << "\n";
-*/
 
-    startTime = clock();
+endTime = clock();
+
+std::cout << "TotalTime FFT: " << endTime - startTime << "\n\n";
+
+
+startTime = clock();
+
     for(auto i : data) {
         dft.update(i);
     }
-    std::cout << "dft :\t" << dft.getData(1) << "\t" << abs(dft.getData(1)) << "\n";
-    endTime = clock();
-    std::cout << "TotalTime DFT: " << endTime - startTime << "\n";
+    std::cout << "dft :\t" << dft.getData(harmonic) << "\t" << abs(dft.getData(harmonic)) << "\n";
+endTime = clock();
+std::cout << "TotalTime DFT: " << endTime - startTime << "\n\n";
 
 
-    startTime = clock();
+startTime = clock();
     for(auto i : data) {
         rdft.update(i);
     }
-    std::cout << "rdft :\t" << rdft.getData(harmonic) << "\t" << abs(rdft.getData(harmonic)) << "\n";
+   std::cout << "rdft :\t" << rdft.getData(harmonic) << "\t" << abs(rdft.getData(harmonic)) << "\n";
 
     /*
     rdft.setNewBase(&bbb);
@@ -102,8 +115,8 @@ int main()
     std::cout << "rdft :\t" << rdft.getData(harmonic) << "\t" << abs(rdft.getData(harmonic)) << "\n";
 
     */
-    endTime = clock();
-    std::cout << "TotalTime RDFT: " << endTime - startTime << "\n";
+endTime = clock();
+std::cout << "TotalTime RDFT: " << endTime - startTime << "\n\n";
 
 
 

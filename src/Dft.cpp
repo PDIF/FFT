@@ -1,5 +1,6 @@
 #include "Dft.h"
 
+
 using complex_t   = std::complex<double>;
 using base_wave_t = BaseSineWave;
 using size_vec_t  = std::vector<size_t>;
@@ -56,5 +57,6 @@ void Dft::setNewBase(const base_wave_t* newBaseSineWave)
 void Dft::setNewHarmonicalSet(const size_vec_t& newSet)
 {
     FourierTransform::setNewHarmonicalSet(newSet);
-}
+};
+
 

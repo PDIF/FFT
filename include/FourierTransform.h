@@ -38,7 +38,7 @@ class FourierTransform
 
         //Получение размера буфера по указателю
         size_t _getSize() {
-            return _validWave ? _validWave->size() : 0;
+            return (_validWave ? _validWave->size() : 0);
         };
     };
 

@@ -16,8 +16,10 @@
 					<Add option="-std=c17" />
 					<Add option="-g" />
 					<Add directory="include" />
-					<Add directory="./" />
 				</Compiler>
+				<Linker>
+					<Add directory="include" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/DFTExample" prefix_auto="1" extension_auto="1" />

@@ -124,7 +124,7 @@
 	<vector>
 	<assert.h>
 
-1686918400 source:/Data/Projects/DFTExample/main.cpp
+1687416980 source:/Data/Projects/DFTExample/main.cpp
 	<iostream>
 	<fstream>
 	<complex>
@@ -132,6 +132,15 @@
 	"Dft.h"
 	<ctime>
 	"ReferenceSineWave.h"
+	<iostream>
+	<fstream>
+	<complex>
+	"Fft.h"
+	"Dft.h"
+	"Rdft.h"
+	<ctime>
+	"ReferenceSineWave.h"
+	"BaseSineWave.h"
 
 1686917480 /Data/Projects/DFTExample/include/DigitalSignalProcess.h
 	<complex>
@@ -149,8 +158,16 @@
 	<assert.h>
 	"Convolution.h"
 	"Step.h"
+	<complex>
+	<vector>
+	"RingBuffer.h"
+	<assert.h>
+	"Convolution.h"
+	"Step.h"
 
-1686906377 /Data/Projects/DFTExample/include/RingBuffer.h
+1687324352 /Data/Projects/DFTExample/include/RingBuffer.h
+	<vector>
+	<assert.h>
 	<vector>
 	<assert.h>
 
@@ -159,8 +176,10 @@
 
 1686913053 source:/Data/Projects/DFTExample/src/ReferenceSineWave.cpp
 	"ReferenceSineWave.h"
+	"ReferenceSineWave.h"
 
 1684914574 source:/Data/Projects/DFTExample/src/SignalGenerate.cpp
+	"SignalGenerate.h"
 	"SignalGenerate.h"
 
 1684502537 /Data/Projects/DFTExample/include/SignalGenerate.h
@@ -168,12 +187,19 @@
 	<array>
 	<math.h>
 	<cassert>
+	<vector>
+	<array>
+	<math.h>
+	<cassert>
 
-1686902826 /Data/Projects/DFTExample/include/Convolution.h
+1687346069 /Data/Projects/DFTExample/include/Convolution.h
+	<vector>
+	<assert.h>
 	<vector>
 	<assert.h>
 
 1686831810 source:/Data/Projects/DFTExample/src/Convolution.cpp
+	"Convolution.h"
 	"Convolution.h"
 
 1686920522 on.h"
@@ -181,19 +207,24 @@
 1686833106 /Data/Projects/DFTExample/include/Step.h
 	<complex>
 	<assert.h>
+	<complex>
+	<assert.h>
 
 1686832932 source:/Data/Projects/DFTExample/src/Step.cpp
 	"Step.h"
+	"Step.h"
 
-1686913953 source:/Data/Projects/DFTExample/src/Dft.cpp
+1687339978 source:/Data/Projects/DFTExample/src/Dft.cpp
+	"Dft.h"
 	"Dft.h"
 
-1686918212 /Data/Projects/DFTExample/include/Dft.h
+1687341709 /Data/Projects/DFTExample/include/Dft.h
 	<complex>
 	"RingBuffer.h"
 	"ReferenceSineWave.h"
+	"FourierTransform.h"
 
-1686917966 /Data/Projects/DFTExample/include/Fft.h
+1687454501 /Data/Projects/DFTExample/include/Fft.h
 	<complex>
 	<vector>
 	<algorithm>
@@ -201,20 +232,31 @@
 	<iostream>
 	"ReferenceSineWave.h"
 	"RingBuffer.h"
+	<complex>
+	<vector>
+	<algorithm>
+	<assert.h>
+	<iostream>
+	"ReferenceSineWave.h"
+	"RingBuffer.h"
+	"FourierTransform.h"
 
-1686917966 source:/Data/Projects/DFTExample/src/Fft.cpp
+1687417040 source:/Data/Projects/DFTExample/src/Fft.cpp
+	"Fft.h"
 	"Fft.h"
 
-1686920522 source:d:\projects\dftexample\fft\main.cpp
+1687529197 source:d:\projects\dftexample\fft\main.cpp
 	<iostream>
 	<fstream>
 	<complex>
 	"Fft.h"
 	"Dft.h"
+	"Rdft.h"
 	<ctime>
 	"ReferenceSineWave.h"
+	"BaseSineWave.h"
 
-1686920522 d:\projects\dftexample\fft\include\fft.h
+1687529816 d:\projects\dftexample\fft\include\fft.h
 	<complex>
 	<vector>
 	<algorithm>
@@ -222,6 +264,7 @@
 	<iostream>
 	"ReferenceSineWave.h"
 	"RingBuffer.h"
+	"FourierTransform.h"
 
 1686920522 d:\projects\dftexample\fft\include\referencesinewave.h
 	<complex>
@@ -231,11 +274,11 @@
 	"Convolution.h"
 	"Step.h"
 
-1686920522 d:\projects\dftexample\fft\include\ringbuffer.h
+1687496740 d:\projects\dftexample\fft\include\ringbuffer.h
 	<vector>
 	<assert.h>
 
-1686920522 d:\projects\dftexample\fft\include\convolution.h
+1687496740 d:\projects\dftexample\fft\include\convolution.h
 	<vector>
 	<assert.h>
 
@@ -243,18 +286,17 @@
 	<complex>
 	<assert.h>
 
-1686920522 d:\projects\dftexample\fft\include\dft.h
-	<complex>
+1687503121 d:\projects\dftexample\fft\include\dft.h
 	"RingBuffer.h"
-	"ReferenceSineWave.h"
+	"FourierTransform.h"
 
 1686920522 source:d:\projects\dftexample\fft\src\convolution.cpp
 	"Convolution.h"
 
-1686920522 source:d:\projects\dftexample\fft\src\dft.cpp
+1687503121 source:d:\projects\dftexample\fft\src\dft.cpp
 	"Dft.h"
 
-1686920522 source:d:\projects\dftexample\fft\src\fft.cpp
+1687527528 source:d:\projects\dftexample\fft\src\fft.cpp
 	"Fft.h"
 
 1686920522 source:d:\projects\dftexample\fft\src\referencesinewave.cpp
@@ -271,74 +313,6 @@
 
 1686920522 source:d:\projects\dftexample\fft\src\step.cpp
 	"Step.h"
-
-1686831810 source:/Data/Projects/DFTExample/src/Convolution.cpp
-	"Convolution.h"
-
-1687346069 /Data/Projects/DFTExample/include/Convolution.h
-	<vector>
-	<assert.h>
-
-1687339978 source:/Data/Projects/DFTExample/src/Dft.cpp
-	"Dft.h"
-
-1687341709 /Data/Projects/DFTExample/include/Dft.h
-	"FourierTransform.h"
-
-1687324352 /Data/Projects/DFTExample/include/RingBuffer.h
-	<vector>
-	<assert.h>
-
-1686912832 /Data/Projects/DFTExample/include/ReferenceSineWave.h
-	<complex>
-	<vector>
-	"RingBuffer.h"
-	<assert.h>
-	"Convolution.h"
-	"Step.h"
-
-1686833106 /Data/Projects/DFTExample/include/Step.h
-	<complex>
-	<assert.h>
-
-1687417040 source:/Data/Projects/DFTExample/src/Fft.cpp
-	"Fft.h"
-
-1687454501 /Data/Projects/DFTExample/include/Fft.h
-	<complex>
-	<vector>
-	<algorithm>
-	<assert.h>
-	<iostream>
-	"ReferenceSineWave.h"
-	"RingBuffer.h"
-	"FourierTransform.h"
-
-1686913053 source:/Data/Projects/DFTExample/src/ReferenceSineWave.cpp
-	"ReferenceSineWave.h"
-
-1684914574 source:/Data/Projects/DFTExample/src/SignalGenerate.cpp
-	"SignalGenerate.h"
-
-1684502537 /Data/Projects/DFTExample/include/SignalGenerate.h
-	<vector>
-	<array>
-	<math.h>
-	<cassert>
-
-1686832932 source:/Data/Projects/DFTExample/src/Step.cpp
-	"Step.h"
-
-1687416980 source:/Data/Projects/DFTExample/main.cpp
-	<iostream>
-	<fstream>
-	<complex>
-	"Fft.h"
-	"Dft.h"
-	"Rdft.h"
-	<ctime>
-	"ReferenceSineWave.h"
-	"BaseSineWave.h"
 
 1687340349 source:/Data/Projects/DFTExample/src/Rdft.cpp
 	"Rdft.h"
@@ -363,4 +337,29 @@
 	<algorithm>
 	"BaseSineWave.h"
 	"RingBuffer.h"
+
+1687496740 source:d:\projects\dftexample\fft\src\basesinewave.cpp
+	"BaseSineWave.h"
+
+1687496740 d:\projects\dftexample\fft\include\basesinewave.h
+	<vector>
+	<complex>
+	<cmath>
+	<assert.h>
+
+1687502868 d:\projects\dftexample\fft\include\fouriertransform.h
+	<vector>
+	<algorithm>
+	"BaseSineWave.h"
+	"RingBuffer.h"
+
+1687503287 source:d:\projects\dftexample\fft\src\fouriertransform.cpp
+	"FourierTransform.h"
+
+1687503896 source:d:\projects\dftexample\fft\src\rdft.cpp
+	"Rdft.h"
+
+1687503188 d:\projects\dftexample\fft\include\rdft.h
+	"RingBuffer.h"
+	"FourierTransform.h"
 
