@@ -14,13 +14,16 @@ Fft::Fft(
     const size_vec_t&  initHarmonics,
     double             initAngle,
     double             initAmplitude)
-:  FourierTransform(initBaseSineWave, initHarmonics, initAngle, initAmplitude)
-, _convolutionLayout(Convolution(initBaseSineWave))
-, _baseLayout(Base(initBaseSineWave))
-, _convolutionData(ring_base_t(_harmonics.size(), ring_complex_t(_convolutionLayout.length())))
-, _baseData     (ring_base_t(_baseLayout.size(), ring_complex_t((_baseLayout.size() - 1) * _baseLayout.step())))
-
-, _baseResult(complex_vec_t(_baseLayout.size()))
+:  FourierTransform ( initBaseSineWave, initHarmonics, initAngle, initAmplitude)
+, _convolutionLayout( Convolution(initBaseSineWave))
+, _baseLayout       ( Base(initBaseSineWave))
+, _convolutionData  (_initConvolutionData(
+                         _harmonics.size(),
+                         _convolutionLayout.length()))
+, _baseData         (_initBaseData(
+                         _baseLayout.size(),
+                         _baseLayout.step()))
+, _baseResult       (_initBaseResult(_baseLayout.size()))
 {
     //ctor
 };
@@ -38,16 +41,11 @@ void Fft::update(double newValue)
 
     complex_t complexValue(FourierTransform::_correction * newValue);
 
-    //complex_t complexValue(newValue);
+   _updateBase(complexValue);
 
-
-    _updateBase(complexValue);
-
-    _updateResult();
-
+   _updateResult();
 
    _instant.push_front(complexValue);
-
 
 };
 
@@ -55,171 +53,132 @@ void Fft::update(double newValue)
 void Fft::setNewBase(const base_wave_t* newBaseSineWave)
 {
     FourierTransform::setNewBase(newBaseSineWave);
+
+   _convolutionLayout =  Convolution(newBaseSineWave);
+   _baseLayout        =  Base(newBaseSineWave);
+   _convolutionData   = _initConvolutionData(
+                            _harmonics.size(),
+                            _convolutionLayout.length());
+   _baseData          = _initBaseData(
+                            _baseLayout.size(),
+                            _baseLayout.step());
+   _baseResult        = _initBaseResult(_baseLayout.size());
 };
 
 
 void Fft::setNewHarmonicalSet(const size_vec_t& newSet)
 {
     FourierTransform::setNewHarmonicalSet(newSet);
+
+   _convolutionData   = _initConvolutionData(
+                            _harmonics.size(),
+                            _convolutionLayout.length());
 };
 
 
-
-
-/*
-const complex_t& Fft::value(size_t harmonic) const
+void Fft::_updateBase(const complex_t& newValue)
 {
-    auto itFind =  std::find(_harmonics.begin(), _harmonics.end(), harmonic);
 
-    if (itFind != _harmonics.end()) {
+    //Обновление результатов расчета базы
+    for (size_t i = 0; i < _baseLayout.size(); ++i) {
 
-        size_t  index = std::distance(_harmonics.begin(), itFind);
-        return _value[index];
-    }
+       _baseResult[i]      =  newValue;
+        size_t column      = _baseLayout.step() - 1;
 
-    return _defaultComplex;
+        for (const auto& row : _baseLayout[i]) {
+           _baseResult[i] += _baseData[row][column];
+            column        += _baseLayout.step();
+        };
+    };
+
+    //Добавление нового значения в матрицу базы
+    size_t degree = 0;
+
+    for (auto& row : _baseData) {
+        row.push_front(newValue * (*_baseSineWave)[degree]);
+        degree += _baseLayout.step();
+    };
 };
 
-*/
-/*
-void Fft::setCorrection(double angleDegree, double amplitude)
-{
-    _valueCorrection = _initCorrection(angleDegree, amplitude);
-};
-*/
-/*
-size_vec_t Fft::_initNodes()
-{
-    size_vec_t  tmpNodes;
 
-    const auto& convolution = _baseSineWave.convolution;
-
-    for (size_t i = 0; i < convolution.size(); ++i) {
-
-        for (size_t j = 0; j < convolution[i]. size(); ++j) {
-
-            tmpNodes.push_back(convolution[i][j]);
-        }
-    }
-    return tmpNodes;
-};
-*/
-/*
-complex_vec_t Fft::_initComplexVector(size_t newSize)
-{
-    return complex_vec_t(newSize, _defaultComplex);
-};
-
-*/
-/*
-ring_base_t Fft::_initConvolution(size_t newSize)
-{
-    size_t length = _baseSineWave.convolution.length();
-    return ring_base_t(newSize, ring_complex_t(length));
-};
-*/
-/*
-ring_base_t Fft::_initBase()
-{
-    size_t matrixSize   = _baseSineWave.base.size();
-    size_t matrixLength = _baseSineWave.base.length();
-    ring_complex_t initBase(matrixLength);
-
-    return ring_base_t(matrixSize, initBase);
-};
-*/
-/*
-void Fft::_updateCurrent(const complex_t& newValue)
-{
-    for (size_t i = 0; i < _harmonics.size(); ++i) {
-
-       _current[i] = newValue;
-
-        size_t  harmonic    = _harmonics[i];
-        size_t  position    = _baseSineWave.base.step() - 1;
-        const auto& address = _baseSineWave.base[harmonic];
-
-        for (const auto& degree : address) {
-           _current[i] += _base[degree][position];
-            position   += _baseSineWave.base.step();
-        }
-    }
-};
-
-*/
-/*
-void Fft::_updateBase(complex_t newValue)
-{
-    for (auto& harmonic : _base) {
-        harmonic.push_front(newValue);
-        newValue *= _baseSineWave[_baseSineWave.base.step()];
-    }
-};
-*/
-/*
 void Fft::_updateResult()
 {
     for (size_t i = 0; i < _harmonics.size(); ++i) {
 
-       _value[i] = _current[i];
+        size_t    currentHarmonic = _harmonics[i];
+        auto&     sourceHarmonic  = _convolutionData[i];
+        complex_t resultHarmonic  = _baseResult[currentHarmonic %
+                                               _baseLayout.size()];
 
-        for (auto index : _baseSineWave.convolution.expand()) {
+        //Обновление результатов расчета текущей гармоники
+       _result[i] = resultHarmonic;
 
-           _value[i] += _convolution[i][index];
-        }
+        for (const auto& position : _convolutionLayout.expand()) {
+           _result[i] += sourceHarmonic[position];
+        };
 
-        if (_harmonics[i] == 0) {
-           _value[i] *= 0.5;
-        }
-    }
+        //Обновление матрицы свертки
+        complex_t   adding          =  resultHarmonic *
+                                       (*_baseSineWave)[currentHarmonic];
+        const auto& sizeSineWave    = _baseSineWave->size();
+        const auto& sizeConvolution = _convolutionLayout.size();
+        //1. Обработка матрицы свертки до предпоследнего набора позиций
+        for (size_t j = 0; j + 1 < sizeConvolution; ++j) {
+
+            const auto& positionSet = _convolutionLayout[j];
+
+            for (size_t k = 0; k + 1 < positionSet.size(); ++k) {
+
+                size_t     degree   = positionSet.degree *
+                                      currentHarmonic % sizeSineWave;
+                const auto position = positionSet[k];
+                resultHarmonic     += sourceHarmonic[position];
+                sourceHarmonic[position] *= (*_baseSineWave)[degree];
+            };
+
+            size_t degree   = _convolutionLayout[j + 1].degree *
+                               currentHarmonic % sizeSineWave;
+            auto position   =  positionSet[positionSet.size() - 1];
+            resultHarmonic +=  sourceHarmonic[position];
+            sourceHarmonic[position] = resultHarmonic *
+                                       (*_baseSineWave)[degree];
+        };
+        //2. Обработка последнего набора позиций матрицы свертки
+        const auto& lastPosition = _convolutionLayout[sizeConvolution - 1];
+        size_t      degree       =  lastPosition.degree *
+                                    currentHarmonic % sizeSineWave;
+        for (size_t k = 0; k + 1 < lastPosition.size(); ++k) {
+
+           const auto position = lastPosition[k];
+           sourceHarmonic[position] *= (*_baseSineWave)[degree];
+        };
+
+        sourceHarmonic.push_front(adding);
+
+    };
 };
 
-*/
-/*
-void Fft::_updateConvolution()
+
+ring_base_t Fft::_initConvolutionData(size_t newHarmonicsNumber,
+                                      size_t newConvolutionLength)
 {
-    const auto& convolutionBase = _baseSineWave.convolution;
-
-    for (size_t i = 0; i < _harmonics.size(); ++i) {
-
-        size_t    harmonic        = _harmonics[i];
-        auto&     convolutionCurr = _convolution[i];
-        complex_t current         = _current[i];
-
-        size_t degree = harmonic;
-
-        for (size_t j = 0; j < convolutionBase.size(); ++j) {
-
-            for (size_t k = 0; k < convolutionBase[j].size() - 1; ++k) {
-
-                size_t index  = convolutionBase[j][k];
-                current      += convolutionCurr[index];
-                convolutionCurr[index] *= _baseSineWave[degree];
-            }
-
-            if (j != convolutionBase.size() - 1) {
-
-                size_t index  = convolutionBase[j].back();
-                current      += convolutionCurr[index];
-
-                degree  =  convolutionBase.degrees()[j + 1] * harmonic;
-                degree %= _baseSineWave.size();
-
-                convolutionCurr[index] = current * _baseSineWave[degree];
-            }
-        }
-        convolutionCurr.push_front(_current[i] * _baseSineWave[harmonic]);
-    }
+    return ring_base_t(
+               newHarmonicsNumber,
+               ring_complex_t(newConvolutionLength));
 };
-*/
-/*
-complex_t Fft::_initCorrection(double angle, double amplitude)
+
+
+ring_base_t Fft::_initBaseData(size_t newBaseLayoutSize,
+                               size_t newBaseLayoutStep)
 {
-    angle *= _baseSineWave.step.Radian();
-    angle /= _baseSineWave.step.Degree();
-
-    amplitude *= 2.0 / _baseSineWave.size();
-
-    return amplitude * std::exp(complex_t{0, angle});
+    assert(newBaseLayoutSize > 1 && "Zero size for Base");
+    return ring_base_t(
+               newBaseLayoutSize,
+               ring_complex_t((newBaseLayoutSize - 1) * newBaseLayoutStep));
 };
-*/
+
+
+complex_vec_t Fft::_initBaseResult(size_t newBaseLayoutSize)
+{
+    return complex_vec_t(newBaseLayoutSize);
+};

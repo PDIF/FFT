@@ -34,6 +34,7 @@ void Dft::update(double newValue)
    _instant.push_front(complexValue);
 
     for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
+
         size_t harmonic = FourierTransform::_harmonics[i];
 
        _result[i] = _instant[0];

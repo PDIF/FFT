@@ -38,7 +38,7 @@ private:
     //========
 
     static const size_vec_t defaultHarmonicsDft() {
-        return size_vec_t{1, 3};
+        return size_vec_t{1, 3, 5};
     };
 
 };

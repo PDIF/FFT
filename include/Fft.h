@@ -264,6 +264,10 @@ public:
 
 private:
 
+    //========
+    //  Поля
+    //========
+
     ///Макет свертки
     Convolution     _convolutionLayout;//
 
@@ -280,161 +284,33 @@ private:
     complex_vec_t   _baseResult;//
 
 
-
+    //========
+    // Методы
+    //========
 
     ///Обновление элементов базы
-    void _updateBase(const complex_t& newValue) {
-
-        //Обновление результатов расчета базы
-        for (size_t i = 0; i < _baseLayout.size(); ++i) {
-
-           _baseResult[i]      =  newValue;
-            size_t column      = _baseLayout.step() - 1;
-
-            for (const auto& row : _baseLayout[i]) {
-               _baseResult[i] += _baseData[row][column];
-                column        += _baseLayout.step();
-            };
-        };
-
-        //Добавление нового значения в матрицу базы
-        size_t degree = 0;
-
-        for (auto& row : _baseData) {
-            row.push_front(newValue * (*_baseSineWave)[degree]);
-            degree += _baseLayout.step();
-        };
-    };
+    void _updateBase(const complex_t& newValue);
 
 
     ///Обновление вектора результатов вычисления гармоник и матрицы свертки
-    void _updateResult() {
+    void _updateResult();
 
 
-        for (size_t i = 0; i < _harmonics.size(); ++i) {
+    ///Формирование матрицы свертки
+    ring_base_t _initConvolutionData(size_t newHarmonicsNumber,
+                                     size_t newConvolutionLength);
 
-            size_t    currentHarmonic = _harmonics[i];
-            auto&     sourceHarmonic  = _convolutionData[i];
-            complex_t resultHarmonic  = _baseResult[currentHarmonic %
-                                                   _baseLayout.size()];
-
-            //Обновление результатов расчета текущей гармоники
-           _result[i] = resultHarmonic;
-
-            for (const auto& position : _convolutionLayout.expand()) {
-               _result[i] += sourceHarmonic[position];
-            };
-
-            //Обновление матрицы свертки
-            complex_t adding  =  resultHarmonic *
-                                 (*_baseSineWave)[currentHarmonic];
-            const auto& _size = _baseSineWave->size();
-
-            for (size_t j = 0; j + 1 < _convolutionLayout.size(); ++j) {
-
-                const auto& positionSet = _convolutionLayout[j];
-
-                for (size_t k = 0; k + 1 < positionSet.size(); ++k) {
-
-                    size_t     degree   = positionSet.degree *
-                                          currentHarmonic % _size;
-                    const auto position = positionSet[k];
-                    resultHarmonic     += sourceHarmonic[position];
-                    sourceHarmonic[position] *= (*_baseSineWave)[degree];
-                };
-
-                size_t degree   = _convolutionLayout[j + 1].degree *
-                                   currentHarmonic % _size;
-
-                auto position   =  positionSet[positionSet.size() - 1];
-                resultHarmonic +=  sourceHarmonic[position];
-                sourceHarmonic[position] = resultHarmonic *
-                                           (*_baseSineWave)[degree];
-            };
+    ///Формирование матрицы базы
+    ring_base_t _initBaseData(size_t newBaseLayoutSize,
+                              size_t newBaseLayoutStep);
 
 
-            size_t degree = _convolutionLayout[_convolutionLayout.size() - 1].degree * currentHarmonic % _size;
-
-            for (size_t k = 0; k + 1 < _convolutionLayout[_convolutionLayout.size() - 1].size(); ++k) {
-
-               auto ppp = _convolutionLayout[_convolutionLayout.size() - 1][k];
-
-               sourceHarmonic[ppp] *= _baseSineWave->operator[](degree);
-
-            };
-
-            sourceHarmonic.push_front(adding);// * (*_baseSineWave)[harmonic]);
-
-        };
-    };
-
-
-
-//    //ссылка на эталонную синусоиду
-//    //base_wave_t&    _baseSineWave;
-//
-//    //вектор искомых гармоник
-//    size_vec_t      _harmonics;
-//
-//    //матрица значений, умноженных на комплексы эталонной синусоиды
-//    ring_base_t     _base;
-//
-//    //матрица сверток по гармоникам
-//    ring_base_t     _convolution;
-//
-//    //вектор модготовленных мгновенных значений по гармоникам
-//    complex_vec_t   _current;
-//
-//    //результат ЦОС (вектор искомых значений по гармоникам)
-//    complex_vec_t   _value;
-//
-//    //множитель коррекции новой (входящей) величины
-//    complex_t       _valueCorrection;
-//
-//    //дефолтное нулевое комплексное значение
-//    const complex_t _defaultComplex;
-//
-//
-//    //Методы
-//    size_vec_t      _initNodes();
-//
-//    complex_vec_t   _initComplexVector(size_t newSize);
-//
-//    ring_base_t     _initConvolution(size_t newSize);
-//
-//    ring_base_t     _initBase();
-//
-//    complex_t       _initCorrection(double angle, double amplitude);
-//
-//    void            _updateCurrent(const complex_t& newValue);
-//
-//    void            _updateBase(complex_t newValue);
-//
-//    void            _updateResult();
-//
-//    void            _updateConvolution();
-
-
-    static constexpr double defaultAngleCorrection() {
-        return 0.0;
-    };
-
-    static constexpr double defaultAmplitudeCorrection() {
-        return 1.0;
-    };
-
-    static constexpr complex_t zeroComplex() {
-        return complex_t(0.0, 0.0);
-    };
-
-
-
-
-
+    ///Формирвание вектора расчета матрицы базы
+    complex_vec_t _initBaseResult(size_t newBaseLayoutSize);
 
 
     static const size_vec_t defaultHarmonicsFft() {
-        return size_vec_t{1, 2, 3, 5};
+        return size_vec_t{0, 1, 2, 3, 5};
     };
 
 

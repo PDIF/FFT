@@ -129,7 +129,7 @@ protected:
 
     ///Наиболее востребованный набор вычисляемых гармоник
     static const size_vec_t defaultHarmonics() {
-        return size_vec_t{1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
+        return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
     };
 
     static constexpr double defaultZero() {
@@ -138,6 +138,10 @@ protected:
 
     static constexpr double defaultOne() {
         return 1.0;
+    };
+
+    static constexpr double zeroHarmonicalMultiplier() {
+        return 0.5;
     };
 
 private:

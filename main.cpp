@@ -19,7 +19,7 @@ int main()
 {
 auto startTime = clock();
 
-    std::ifstream reading("values 3");
+    std::ifstream reading("values");
     std::string   line;
     std::vector<double> data;
 
@@ -40,8 +40,8 @@ startTime = clock();
 
     ReferenceSineWave a(96);
 
-    BaseSineWave bbb(96);
-    BaseSineWave ccc(96);
+    BaseSineWave bbb(80);
+    BaseSineWave ccc(80);
 
     RingBuffer<std::complex<double>> storeData(96);
 
@@ -50,13 +50,20 @@ std::cout << "Preparing sine wave time: " << endTime - startTime << "\n";
 
 startTime = clock();
     //Fft fft(a, {1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13});
-    Fft fft(&bbb, {1, 2, 3, 4, 5});
-    Dft dft(&bbb, {1});
-    Rdft rdft(&bbb);
+    Fft fft(&ccc, {0, 1, 2, 3, 5});
+    Dft dft(&ccc, {0, 1});
+    Rdft rdft(&ccc);
     //Rdft rdft;
-    //bbb.update(80);
-    //rdft.setNewBase(&ccc);
-    //dft.setNewBase(&ccc);
+    bbb.update(96);
+
+    rdft.setNewBase(&bbb);
+    dft.setNewBase(&bbb);
+    fft.setNewBase(&bbb);
+/*
+    rdft.setNewBase(&ccc);
+    dft.setNewBase(&ccc);
+    fft.setNewBase(&ccc);
+*/
 
 /*
     for(auto i : data) {
@@ -75,7 +82,7 @@ endTime = clock();
 std::cout << "Preparing objects time: " << endTime - startTime << "\n\n";
 
 
-    size_t harmonic = 1;
+    size_t harmonic = 0;
 
 
 startTime = clock();
