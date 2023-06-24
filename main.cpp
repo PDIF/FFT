@@ -19,7 +19,7 @@ int main()
 {
 auto startTime = clock();
 
-    std::ifstream reading("values 1");
+    std::ifstream reading("values 3");
     std::string   line;
     std::vector<double> data;
 
@@ -40,7 +40,7 @@ startTime = clock();
 
     ReferenceSineWave a(96);
 
-    BaseSineWave bbb(8);
+    BaseSineWave bbb(96);
     BaseSineWave ccc(96);
 
     RingBuffer<std::complex<double>> storeData(96);
@@ -50,8 +50,8 @@ std::cout << "Preparing sine wave time: " << endTime - startTime << "\n";
 
 startTime = clock();
     //Fft fft(a, {1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13});
-    Fft fft(&bbb, {1});
-    Dft dft(&bbb, {1, 2, 3});
+    Fft fft(&bbb, {1, 2, 3, 4, 5});
+    Dft dft(&bbb, {1});
     Rdft rdft(&bbb);
     //Rdft rdft;
     //bbb.update(80);

@@ -265,19 +265,19 @@ public:
 private:
 
     ///Макет свертки
-    Convolution     _convolution;//
+    Convolution     _convolutionLayout;//
 
     ///Макет базы
-    Base            _base;//
-
-    ///Матрица базы
-    ring_base_t     _baseData;//
+    Base            _baseLayout;//
 
     ///Матрица свертки
     ring_base_t     _convolutionData;
 
+    ///Матрица базы
+    ring_base_t     _baseData;//
+
     ///Результат расчета матрицы базы
-    complex_vec_t   _resultBase;//
+    complex_vec_t   _baseResult;//
 
 
 
@@ -286,24 +286,23 @@ private:
     void _updateBase(const complex_t& newValue) {
 
         //Обновление результатов расчета базы
-        for (size_t i = 0; i < _base.size(); ++i) {
+        for (size_t i = 0; i < _baseLayout.size(); ++i) {
 
-           _resultBase[i]    =  newValue;
-            size_t column    = _base.step() - 1;
-            const auto& rows = _base[i];
+           _baseResult[i]      =  newValue;
+            size_t column      = _baseLayout.step() - 1;
 
-            for (const auto& row : rows) {
-               _resultBase[i] += _baseData[row][column];
-                column        += _base.step();
+            for (const auto& row : _baseLayout[i]) {
+               _baseResult[i] += _baseData[row][column];
+                column        += _baseLayout.step();
             };
         };
 
         //Добавление нового значения в матрицу базы
-        size_t _degree = 0;
+        size_t degree = 0;
 
-        for (auto& baseRow : _baseData) {
-            baseRow.push_front(newValue * _baseSineWave->operator[](_degree));
-           _degree += _base.step();
+        for (auto& row : _baseData) {
+            row.push_front(newValue * (*_baseSineWave)[degree]);
+            degree += _baseLayout.step();
         };
     };
 
@@ -311,74 +310,60 @@ private:
     ///Обновление вектора результатов вычисления гармоник и матрицы свертки
     void _updateResult() {
 
-        //Обновление результатов расчета гармоник
+
         for (size_t i = 0; i < _harmonics.size(); ++i) {
 
-            size_t harmonic = _harmonics[i];
-            auto&  result   = _result[i];
-            auto&  source   = _convolutionData[i];
-            result = _resultBase[harmonic % _base.size()];
+            size_t    currentHarmonic = _harmonics[i];
+            auto&     sourceHarmonic  = _convolutionData[i];
+            complex_t resultHarmonic  = _baseResult[currentHarmonic %
+                                                   _baseLayout.size()];
 
-            for (const auto& position : _convolution.expand()) {
-                result += source[position];
+            //Обновление результатов расчета текущей гармоники
+           _result[i] = resultHarmonic;
+
+            for (const auto& position : _convolutionLayout.expand()) {
+               _result[i] += sourceHarmonic[position];
             };
-        };
 
+            //Обновление матрицы свертки
+            complex_t adding  =  resultHarmonic *
+                                 (*_baseSineWave)[currentHarmonic];
+            const auto& _size = _baseSineWave->size();
 
-        //Обновление матрицы свертки
-        for (size_t i = 0; i < _harmonics.size(); ++i) {
+            for (size_t j = 0; j + 1 < _convolutionLayout.size(); ++j) {
 
-            size_t harmonic   = _harmonics[i];
-            auto&  source     = _convolutionData[i];
+                const auto& positionSet = _convolutionLayout[j];
 
-            complex_t tmpBase = _resultBase[harmonic % _base.size()];
-            complex_t adding  =  tmpBase * _baseSineWave->operator[](harmonic);
+                for (size_t k = 0; k + 1 < positionSet.size(); ++k) {
 
-            for (size_t j = 0; j + 1 < _convolution.size(); ++j) {
-
-                for (size_t k = 0; k + 1 < _convolution[j].size(); ++k) {
-
-                    size_t degree = _convolution[j].degree * harmonic %
-                                    _baseSineWave->size();
-                    auto ppp = _convolution[j][k];
-                    //tmpBase      +=  source[k];
-                    tmpBase      +=  source[ppp];
-                    //source[k]    *= _baseSineWave->operator[](degree);
-                    source[ppp]    *= _baseSineWave->operator[](degree);
+                    size_t     degree   = positionSet.degree *
+                                          currentHarmonic % _size;
+                    const auto position = positionSet[k];
+                    resultHarmonic     += sourceHarmonic[position];
+                    sourceHarmonic[position] *= (*_baseSineWave)[degree];
                 };
 
-                //tmpBase      += source[_convolution[j].size() - 1];
+                size_t degree   = _convolutionLayout[j + 1].degree *
+                                   currentHarmonic % _size;
 
-                size_t degree = _convolution[j + 1].degree * harmonic %
-                                _baseSineWave->size();
-
-                auto ppp = _convolution[j][_convolution[j].size() - 1];
-                //source[_convolution[j].size() - 1] = tmpBase * (*_baseSineWave)[degree];
-                source[ppp] = tmpBase * _baseSineWave->operator[](degree);
-
+                auto position   =  positionSet[positionSet.size() - 1];
+                resultHarmonic +=  sourceHarmonic[position];
+                sourceHarmonic[position] = resultHarmonic *
+                                           (*_baseSineWave)[degree];
             };
 
 
+            size_t degree = _convolutionLayout[_convolutionLayout.size() - 1].degree * currentHarmonic % _size;
 
+            for (size_t k = 0; k + 1 < _convolutionLayout[_convolutionLayout.size() - 1].size(); ++k) {
 
-            size_t degree = _convolution[_convolution.size() - 1].degree * harmonic %
-                                _baseSineWave->size();
+               auto ppp = _convolutionLayout[_convolutionLayout.size() - 1][k];
 
-            for (size_t k = 0; k + 1 < _convolution[_convolution.size() - 1].size(); ++k) {
-
-
-               //_convolutionData[_convolution.size() - 1][k] *= (*_baseSineWave)[degree];
-
-
-
-               //_convolutionData[i][_convolution[_convolution.size() - 1][_convolution[_convolution.size() - 1].size() - 1]
-               auto ppp = _convolution[_convolution.size() - 1][k];
-
-               source[ppp] *= _baseSineWave->operator[](degree);
+               sourceHarmonic[ppp] *= _baseSineWave->operator[](degree);
 
             };
 
-            source.push_front(adding);// * (*_baseSineWave)[harmonic]);
+            sourceHarmonic.push_front(adding);// * (*_baseSineWave)[harmonic]);
 
         };
     };

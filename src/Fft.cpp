@@ -15,11 +15,12 @@ Fft::Fft(
     double             initAngle,
     double             initAmplitude)
 :  FourierTransform(initBaseSineWave, initHarmonics, initAngle, initAmplitude)
-, _convolution(Convolution(initBaseSineWave))
-, _base(Base(initBaseSineWave))
-, _baseData     (ring_base_t(_base.size(), ring_complex_t((_base.size() - 1) * _base.step())))
-, _convolutionData(ring_base_t(_harmonics.size(), ring_complex_t(_convolution.length())))
-, _resultBase(complex_vec_t(_base.size()))
+, _convolutionLayout(Convolution(initBaseSineWave))
+, _baseLayout(Base(initBaseSineWave))
+, _convolutionData(ring_base_t(_harmonics.size(), ring_complex_t(_convolutionLayout.length())))
+, _baseData     (ring_base_t(_baseLayout.size(), ring_complex_t((_baseLayout.size() - 1) * _baseLayout.step())))
+
+, _baseResult(complex_vec_t(_baseLayout.size()))
 {
     //ctor
 };
@@ -35,9 +36,9 @@ void Fft::update(double newValue)
         return;
     };
 
-    //complex_t complexValue(FourierTransform::_correction * newValue);
+    complex_t complexValue(FourierTransform::_correction * newValue);
 
-    complex_t complexValue(newValue);
+    //complex_t complexValue(newValue);
 
 
     _updateBase(complexValue);
