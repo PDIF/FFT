@@ -36,13 +36,11 @@ void Dft::update(double newValue)
     for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
 
         size_t harmonic = FourierTransform::_harmonics[i];
-
        _result[i] = _instant[0];
 
         for (size_t j = 1; j < _baseSineWave->size(); ++j) {
 
              size_t _position = j * harmonic % _baseSineWave->size();
-
             _result[i] += _instant[j] * (*_baseSineWave)[_position];
         };
     };

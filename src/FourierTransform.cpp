@@ -30,10 +30,10 @@ FourierTransform::~FourierTransform()
 };
 
 
-void FourierTransform::setNewHarmonicalSet(const size_vec_t& newSet)
+void FourierTransform::setNewHarmonicalSet(const size_vec_t& newHarmonicalSet)
 {
-    _harmonics = newSet;
-    _result    = complex_vec_t(newSet.size(), _zero);
+    _harmonics = newHarmonicalSet;
+    _result    = complex_vec_t(newHarmonicalSet.size(), _zero);
 };
 
 
@@ -107,8 +107,11 @@ complex_t FourierTransform::_computeCorrection(double newAngle,
         return _zero;
     };
 
+
+
+
     complex_t tmpAmplitude = 2.0 * newAmplitude / _baseSineWave->size();
-    complex_t tmpImage     = complex_t(0.0, base_wave_t::degToRad(newAngle));
+    complex_t tmpImage     = complex_t(0.0, base_wave_t::Pi::degToRad(newAngle));
     complex_t tmpRotate    = std::exp(tmpImage);
 
     return tmpAmplitude * tmpRotate;

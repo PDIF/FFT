@@ -51,7 +51,11 @@ std::cout << "Preparing sine wave time: " << endTime - startTime << "\n";
 startTime = clock();
     //Fft fft(a, {1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13});
     Fft fft(&ccc, {0, 1, 2, 3, 5});
+    //Fft fft(0, {0, 1, 2, 3, 5});
+
     Dft dft(&ccc, {0, 1});
+    //Dft dft(0, {0, 1});
+
     Rdft rdft(&ccc);
     //Rdft rdft;
     bbb.update(96);

@@ -21,22 +21,22 @@ class BaseSineWave
     public:
 
         ///Количество шагов (точек) на период
-        size_t count() const {
+        size_t count() const noexcept {
             return _count;
         };
 
         ///Значение шага в градусах
-        double degree() const {
+        double degree() const noexcept {
             return _degree;
         };
 
         ///Значение шага в радианах
-        double radian() const {
+        double radian() const noexcept {
             return _radian;
         };
 
         ///Комплексное значение шага
-        complex_t complex() const {
+        complex_t complex() const noexcept {
             return _complex;
         };
 
@@ -54,7 +54,7 @@ class BaseSineWave
         //=================
         ///Конструктор с указанием числа точек на период
         Step(size_t initStep)
-        : _count  (initStep)
+        : _count  ( initStep)
         , _degree (_computeDegree(initStep))
         , _radian (_computeRadian(initStep))
         , _complex(_computeComplex(initStep))
@@ -75,6 +75,10 @@ class BaseSineWave
 
         double _computeDegree(size_t newStep) {
             assert (newStep > 0 && "Null step value in _computeDegree");
+
+
+
+
             return 2.0 * BaseSineWave::Pi::deg / newStep;
 
         };
@@ -96,11 +100,25 @@ public:
     ///Структура для хранения числа ПИ
     struct Pi
     {
+        Pi() noexcept
+        { };
+
         ///Значение в градусах
         static constexpr double deg = 180.0;
 
         ///Значение в радианах
         static constexpr double rad = acos(-1.0);
+
+        ///Перевод градусов в радианы
+        static double degToRad(double angle) noexcept {
+            return angle * rad / deg;
+        };
+
+        ///Перевод радиан в градусы
+        static double radToDeg(double angle) noexcept {
+            return angle * deg / rad;
+        };
+
     };
 
 
@@ -120,15 +138,6 @@ public:
     const
     complex_t&  operator[](size_t index) const;
 
-    ///Перевод градусов в радианы
-    static double degToRad(double angle) {
-        return angle * Pi::rad / Pi::deg;
-    };
-
-    ///Перевод радиан в градусы
-    static double radToDeg(double angle) {
-        return angle * Pi::deg / Pi::rad;
-    };
 
     virtual ~BaseSineWave();
 
@@ -147,7 +156,7 @@ private:
     complex_vec_t   _setWave(size_t initStep);
 
     ///Число точек на период в соответствии с корпоративным профилем
-    static constexpr size_t defaultSize() {
+    static constexpr size_t defaultSize() noexcept {
         return 96;
     };
 

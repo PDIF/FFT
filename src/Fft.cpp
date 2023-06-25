@@ -33,7 +33,7 @@ Fft::~Fft()
     //dtor
 }
 
-void Fft::update(double newValue)
+void Fft::update(double newValue)// noexcept
 {
     if (!FourierTransform::isValid()) {
         return;
@@ -76,7 +76,7 @@ void Fft::setNewHarmonicalSet(const size_vec_t& newSet)
 };
 
 
-void Fft::_updateBase(const complex_t& newValue)
+void Fft::_updateBase(const complex_t& newValue) //noexcept
 {
 
     //Обновление результатов расчета базы
@@ -101,7 +101,7 @@ void Fft::_updateBase(const complex_t& newValue)
 };
 
 
-void Fft::_updateResult()
+void Fft::_updateResult()// noexcept
 {
     for (size_t i = 0; i < _harmonics.size(); ++i) {
 

@@ -18,9 +18,9 @@
 
 class Fft : public FourierTransform
 {
-    using base_wave_t   = BaseSineWave;
+    using base_wave_t    = BaseSineWave;
     using size_vec_t     = std::vector<size_t>;
-    using size_matrix_t     = std::vector<size_vec_t>;
+    using size_matrix_t  = std::vector<size_vec_t>;
     using complex_t      = std::complex<double>;
     using complex_vec_t  = std::vector<complex_t>;
     using ring_complex_t = RingBuffer<complex_t>;
@@ -289,11 +289,11 @@ private:
     //========
 
     ///Обновление элементов базы
-    void _updateBase(const complex_t& newValue);
+    void _updateBase(const complex_t& newValue);// noexcept;
 
 
     ///Обновление вектора результатов вычисления гармоник и матрицы свертки
-    void _updateResult();
+    void _updateResult();// noexcept;
 
 
     ///Формирование матрицы свертки
@@ -305,10 +305,11 @@ private:
                               size_t newBaseLayoutStep);
 
 
-    ///Формирвание вектора расчета матрицы базы
+    ///Формирование вектора расчета матрицы базы
     complex_vec_t _initBaseResult(size_t newBaseLayoutSize);
 
 
+    ///Набор вычисляемых гармоник по умолчанию
     static const size_vec_t defaultHarmonicsFft() {
         return size_vec_t{0, 1, 2, 3, 5};
     };
