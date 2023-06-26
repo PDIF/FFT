@@ -9,40 +9,39 @@
 
 class BaseSineWave
 {
-
     using complex_t     = std::complex<double>;
     using complex_vec_t = std::vector<complex_t>;
 
-    ///РљР»Р°СЃСЃ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ С€Р°РіР° Рё СЂР°Р·РјРµСЂР° Р±Р°Р·РѕРІРѕР№ СЃРёРЅСѓСЃРѕРёРґС‹
+    ///Класс для хранения шага и размера базовой синусоиды
     class Step
     {
         friend class BaseSineWave;
 
     public:
 
-        ///РљРѕР»РёС‡РµСЃС‚РІРѕ С€Р°РіРѕРІ (С‚РѕС‡РµРє) РЅР° РїРµСЂРёРѕРґ
+        ///Количество шагов (точек) на период
         size_t count() const noexcept {
             return _count;
         };
 
-        ///Р—РЅР°С‡РµРЅРёРµ С€Р°РіР° РІ РіСЂР°РґСѓСЃР°С…
+        ///Значение шага в градусах
         double degree() const noexcept {
             return _degree;
         };
 
-        ///Р—РЅР°С‡РµРЅРёРµ С€Р°РіР° РІ СЂР°РґРёР°РЅР°С…
+        ///Значение шага в радианах
         double radian() const noexcept {
             return _radian;
         };
 
-        ///РљРѕРјРїР»РµРєСЃРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ С€Р°РіР°
+        ///Комплексное значение шага
         complex_t complex() const noexcept {
             return _complex;
         };
 
     private:
         //=================
-        //  Р—Р°РєСЂС‹С‚С‹Рµ РїРѕР»СЏ
+        //  Закрытые поля
         //=================
         size_t      _count;
         double      _degree;
@@ -50,46 +49,36 @@ class BaseSineWave
         complex_t   _complex;
 
         //=================
-        // Р—Р°РєСЂС‹С‚С‹Рµ РјРµС‚РѕРґС‹
+        // Закрытые методы
         //=================
-        ///РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ СѓРєР°Р·Р°РЅРёРµРј С‡РёСЃР»Р° С‚РѕС‡РµРє РЅР° РїРµСЂРёРѕРґ
-        Step(size_t initStep)
+        ///Конструктор с указанием числа точек на период
+        Step(size_t initStep) noexcept
         : _count  ( initStep)
         , _degree (_computeDegree(initStep))
         , _radian (_computeRadian(initStep))
         , _complex(_computeComplex(initStep))
         { };
 
-        ///РџРµСЂРµСЃС‚СЂРѕРµРЅРёРµ С€Р°РіР° СЃ РЅРѕРІС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј С‚РѕС‡РµРє РЅР° РїРµСЂРёРѕРґ
-        void update(size_t newStep) {
-            assert (newStep > 0 && "Null step value in update");
-           _count   =  newStep;
-           _degree  = _computeDegree(newStep);
-           _radian  = _computeRadian(newStep);
-           _complex = _computeComplex(newStep);
-        };
-
         ~Step()
         { };
 
 
-        double _computeDegree(size_t newStep) {
-            assert (newStep > 0 && "Null step value in _computeDegree");
-
-
-
-
+        double _computeDegree(size_t newStep) noexcept
+        {
+            //assert (newStep > 0 && "Null step value in _computeDegree");
             return 2.0 * BaseSineWave::Pi::deg / newStep;
 
         };
 
-        double _computeRadian(size_t newStep) {
-            assert (newStep > 0 && "Null step value in _computeRadian");
+        double _computeRadian(size_t newStep) noexcept
+        {
+            //assert (newStep > 0 && "Null step value in _computeRadian");
             return 2.0 * BaseSineWave::Pi::rad / newStep;
         };
 
-        complex_t _computeComplex(size_t newStep) {
-            assert (newStep > 0 && "Null step value in _computeComplex");
+        complex_t _computeComplex(size_t newStep) noexcept
+        {
+            //assert (newStep > 0 && "Null step value in _computeComplex");
             return std::exp(complex_t(0.0, -_computeRadian(newStep)));
         };
 
@@ -97,24 +86,24 @@ class BaseSineWave
 
 public:
 
-    ///РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ С‡РёСЃР»Р° РџР
+    ///Структура для хранения числа ПИ
     struct Pi
     {
         Pi() noexcept
         { };
 
-        ///Р—РЅР°С‡РµРЅРёРµ РІ РіСЂР°РґСѓСЃР°С…
+        ///Значение в градусах
         static constexpr double deg = 180.0;
 
-        ///Р—РЅР°С‡РµРЅРёРµ РІ СЂР°РґРёР°РЅР°С…
+        ///Значение в радианах
         static constexpr double rad = acos(-1.0);
 
-        ///РџРµСЂРµРІРѕРґ РіСЂР°РґСѓСЃРѕРІ РІ СЂР°РґРёР°РЅС‹
+        ///Перевод градусов в радианы
         static double degToRad(double angle) noexcept {
             return angle * rad / deg;
         };
 
-        ///РџРµСЂРµРІРѕРґ СЂР°РґРёР°РЅ РІ РіСЂР°РґСѓСЃС‹
+        ///Перевод радиан в градусы
         static double radToDeg(double angle) noexcept {
             return angle * deg / rad;
         };
@@ -122,19 +111,16 @@ public:
     };
 
 
-    ///РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ Р·Р°РґР°РЅРёРµРј СЂР°Р·РјРµСЂР° (С‡РёСЃР»Рѕ С‚РѕС‡РµРє РЅР° РїРµСЂРёРѕРґ)
+    ///Конструктор с заданием размера (число точек на период)
     BaseSineWave(size_t initSize = defaultSize());
 
-    ///РҐР°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё С€Р°РіР° СЌС‚Р°Р»РѕРЅРЅРѕР№ СЃРёРЅСѓСЃРѕРёРґС‹
-    Step        step;
+    ///Характеристики шага эталонной синусоиды
+    Step    step;
 
-    ///РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ С€Р°РіР° РЅР° РїРµСЂРёРѕРґ СЌС‚Р°Р»РѕРЅРЅРѕР№ СЃРёРЅСѓСЃРѕРёРґС‹
-    void        update(size_t newSize = defaultSize());
+    ///Размер эталонной синусоиды (число точек на период)
+    size_t  size()  const noexcept;
 
-    ///Р Р°Р·РјРµСЂ СЌС‚Р°Р»РѕРЅРЅРѕР№ СЃРёРЅСѓСЃРѕРёРґС‹ (С‡РёСЃР»Рѕ С‚РѕС‡РµРє РЅР° РїРµСЂРёРѕРґ)
-    size_t      size()    const;
-
-    ///РћРїРµСЂР°С‚РѕСЂ []
+    ///Оператор []
     const
     complex_t&  operator[](size_t index) const;
 
@@ -145,19 +131,41 @@ public:
 private:
 
     //=================
-    //  Р—Р°РєСЂС‹С‚С‹Рµ РїРѕР»СЏ
+    //  Закрытые поля
     //=================
     complex_vec_t   _sineWave;
 
     //=================
-    // Р—Р°РєСЂС‹С‚С‹Рµ РјРµС‚РѕРґС‹
+    // Закрытые методы
     //=================
-    Step            _setStep(size_t initStep);
-    complex_vec_t   _setWave(size_t initStep);
 
-    ///Р§РёСЃР»Рѕ С‚РѕС‡РµРє РЅР° РїРµСЂРёРѕРґ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РєРѕСЂРїРѕСЂР°С‚РёРІРЅС‹Рј РїСЂРѕС„РёР»РµРј
+    ///Вычисление размера шага
+    Step          _setStep(size_t initStep);
+
+    ///Расчет эталонной синусоиды
+    complex_vec_t _setWave(size_t initStep);
+
+
+    ///Число точек на период в соответствии с корпоративным профилем
     static constexpr size_t defaultSize() noexcept {
         return 96;
+    };
+
+
+    ///Максимально допустимый размер базовой синусоиды
+    static constexpr size_t maxSize() noexcept
+    {
+        // Максимальное значение точек на период, согласно корпоративному
+        // профилю, составляет 288. Принимаем максимально допустимое значение
+        // с небольшим запасом, округлив величину до 300
+        return 300;
+    };
+
+    ///Минимально допустимый размер базовой синусоиды
+    static constexpr size_t minSize() noexcept
+    {
+        // Должна быть, как минимум, одна точка
+        return 1;
     };
 
 };

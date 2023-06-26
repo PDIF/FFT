@@ -2,47 +2,31 @@
 #define RINGBUFFER_H
 
 #include <vector>
-#include <assert.h>
-
-//#include <map>
-//#include <iostream>
+#include <stdexcept>
 
 template <typename T>
 class RingBuffer
 {
 public:
 
-    ///РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+    ///Конструктор
     RingBuffer(size_t initBufferSize)
-    : _bufferSize(initBufferSize)
-    , _current   (defaultCurrent())
-    , _data      (std::vector<T>(_bufferSize, static_cast<T>(0)))
+    : _bufferSize(_setBufferSize(initBufferSize))
+    , _data      (_setDataVector(initBufferSize))
+    , _current   ( defaultCurrent())
     { };
 
     virtual ~RingBuffer()
     { };
 
-/*
-    ///РџРµСЂРµРЅР°Р·РЅР°С‡РµРЅРёРµ СЂР°Р·РјРµСЂРѕРІ Р±СѓС„РµСЂР°
-    void setBuffer(size_t newBufferSize)
-    {
-        _bufferSize =  newBufferSize;
-        //_currentPosition = _setCurrentPosition(newBufferSize);
-
-        _current    =  defaultCurrent();
-        //_data       =  std::vector<T>(_currentPosition.size(), static_cast<T>(0));
-        _data       =  std::vector<T>(_bufferSize, static_cast<T>(0));
-    };
-*/
-
-    ///Р Р°Р·РјРµСЂ Р±СѓС„РµСЂР°
+    ///Размер буфера
     size_t size()  const noexcept
     {
         return _bufferSize;
     };
 
 
-    ///Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РІ РЅР°С‡Р°Р»Рѕ Р±СѓС„РµСЂР°
+    ///Добавление нового значения в начало буфера
     void push_front(const T& newData) noexcept
     {
        _moveCurrent();
@@ -50,7 +34,7 @@ public:
     };
 
 
-    ///Р”РѕР±Р°РІР»РµРЅРёРµ РјР°СЃСЃРёРІР° Р·РЅР°С‡РµРЅРёР№ РІ РЅР°С‡Р°Р»Рѕ Р±СѓС„РµСЂР°
+    ///Добавление массива значений в начало буфера
     void push_front(const std::vector<T>& newData) noexcept
     {
         for (const auto & i : {newData.crbegin(), newData.crend()}) {
@@ -59,53 +43,91 @@ public:
     };
 
 
-    ///РћР±СЂР°С‰РµРЅРёРµ Рє РѕС‚РґРµР»СЊРЅРѕРјСѓ СЌР»РµРјРµРЅС‚Сѓ РјР°СЃСЃРёРІР° (0 - СЃР°РјС‹Р№ РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚)
-    T& operator[](size_t index) noexcept {
+    ///Обращение к отдельному элементу массива (0 - самый новый элемент)
+    T& operator[](size_t index)
+    {
         return _data[_setBufferIndex(index)];
     };
 
-    const T& operator[](size_t index) const noexcept {
+    const T& operator[](size_t index) const
+    {
         return _data[_setBufferIndex(index)];
     };
 
 private:
 
     size_t         _bufferSize;
-    size_t         _current;
     std::vector<T> _data;
+    size_t         _current;
 
 
-    size_t _setBufferIndex(size_t index) noexcept
+    ///Установка корректного размера буфера
+    size_t _setBufferSize(size_t newBufferSize)
     {
-        assert((index < _bufferSize) && "Index exceeds buffer size");
-
-        index += _current;
-        if (index < _bufferSize) {
-            return index;
+        if (newBufferSize < minSize()) { //(newBufferSize > maxSize() || newBufferSize < minSize()) {
+            throw std::length_error{"Exceeding the allowed buffer size"};
         };
-
-        index -= _bufferSize;
-        return index;
+        return newBufferSize;
     };
 
 
+    ///Создание вектора для хранения данных
+    std::vector<T> _setDataVector(size_t newBufferSize)
+    {
+        return std::vector<T>(newBufferSize, static_cast<T>(0));
+    };
+
+
+    ///Вычисление индекса текущего элемента
+    size_t _setBufferIndex(size_t index)
+    {
+        if (index >= _bufferSize) {
+            throw std::out_of_range{"Index exceeding the allowed buffer size"};
+        };
+
+        index += _current;
+        return index < _bufferSize ? index : index - _bufferSize;
+    };
+
+
+    ///Изменение значения указателя на начальный элемент буфера
     void _moveCurrent() noexcept
     {
-
-        if (_current > 0) {
+        if (_current != 0) {
             --_current;
             return;
         };
 
        _current = _bufferSize - 1;
 
-
     };
 
 
-    static constexpr size_t defaultCurrent() noexcept {
+    ///Текущий индекс по умолчанию
+    static constexpr size_t defaultCurrent() noexcept
+    {
         return 0;
-    }
+    };
+
+
+
+    /*
+    ///Максимально допустимый размер буфера
+    static constexpr size_t maxSize() noexcept
+    {
+        // Максимальное значение точек на период, согласно корпоративному
+        // профилю, составляет 288. Принимаем максимально допустимое значение
+        // с небольшим запасом, округлив величину до 300
+        return 300;
+    };
+    */
+
+    ///Минимально допустимый размер буфера
+    static constexpr size_t minSize() noexcept
+    {
+        // Должна быть, как минимум, одна точка
+        return 1;
+    };
 
 };
 

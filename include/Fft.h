@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include "ReferenceSineWave.h"
-#include "RingBuffer.h"
+//#include "RingBuffer.h"
 
 
 #include "FourierTransform.h"
@@ -26,16 +26,16 @@ class Fft : public FourierTransform
     using ring_complex_t = RingBuffer<complex_t>;
     using ring_base_t    = std::vector<ring_complex_t>;
 
-    //РћР±СЉСЏРІР»РµРЅРёРµ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР° РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє РЅРµРјСѓ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅС‹С… РјРµС‚РѕРґРѕРІ
+    //Объявление базового класса для подключения к нему дружественных методов
     class Base;
 
-    ///РљР»Р°СЃСЃ РјР°РєРµС‚Р° СЃРІРµСЂС‚РєРё
+    ///Класс макета свертки
     class Convolution
     {
-        //Р”СЂСѓР¶РµСЃС‚РІРµРЅРЅС‹Р№ РєР»Р°СЃСЃ
+        //Дружественный класс
         friend class Base;
 
-        ///РљР»Р°СЃСЃ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ РјР°РєРµС‚Р° СЃРІРµСЂС‚РєРё
+        ///Класс содержимого макета свертки
         class Data
         {
         public:
@@ -45,26 +45,26 @@ class Fft : public FourierTransform
             , _position(initPosition)
             { };
 
-            ///РЎС‚РµРїРµРЅСЊ СЌР»РµРјРµРЅС‚Р° СЃРІРµСЂС‚РєРё РґР»СЏ РїРµСЂРІРѕР№ РіР°СЂРјРѕРЅРёРєРё
+            ///Степень элемента свертки для первой гармоники
             const size_t  degree;
 
-            ///РџРѕР·РёС†РёСЏ СЌР»РµРјРµРЅС‚Р° СЃРІРµСЂС‚РєРё С‚РµРєСѓС‰РµР№ СЃС‚РµРїРµРЅРё
+            ///Позиция элемента свертки текущей степени
             const size_t& operator[](size_t index) const {
                 return _position[index];
             };
 
-            ///РљРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР·РёС†РёР№ СЌР»РµРјРµРЅС‚РѕРІ СЃРІРµСЂС‚РєРё С‚РµРєСѓС‰РµР№ СЃС‚РµРїРµРЅРё
+            ///Количество позиций элементов свертки текущей степени
             size_t size() const {
                 return _position.size();
             };
 
-            ///РџРѕР·РёС†РёСЏ РїРѕСЃР»РµРґРЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° СЃРІРµСЂС‚РєРё С‚РµРєСѓС‰РµР№ СЃС‚РµРїРµРЅРё
+            ///Позиция последнего элемента свертки текущей степени
             size_t back() const{
                 return _position.back();
             };
 
         private:
-            ///Р’РµРєС‚РѕСЂ РїРѕР·РёС†РёР№ СЌР»РµРјРµРЅС‚РѕРІ С‚РµРєСѓС‰РµР№ СЃС‚РµРїРµРЅРё
+            ///Вектор позиций элементов текущей степени
             const size_vec_t _position;
         };
 
@@ -77,37 +77,37 @@ class Fft : public FourierTransform
         , _expand  (_computeExpand(_position))
         { };
 
-        ///РћР±С‰РёР№ СЂР°Р·РјРµСЂ РІРµРєС‚РѕСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ Р·РЅР°С‡РµРЅРёР№ СЃРІРµСЂС‚РєРё
+        ///Общий размер вектора для хранения значений свертки
         const size_t length(){
             return _position.back().back() + 1;
         };
 
-        ///РљРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚РµРїРµРЅРµР№ СЃРІРµСЂС‚РєРё
+        ///Количество степеней свертки
         const size_t size() const {
             return _position.size();
         };
 
-        ///РЎРѕРґРµСЂР¶РёРјРѕРµ РјР°РєРµС‚Р° СЃРІРµСЂС‚РєРё РѕС‚РґРµР»СЊРЅРѕР№ СЃС‚РµРїРµРЅРё
+        ///Содержимое макета свертки отдельной степени
         const Data& operator[](size_t index) const {
             return _position[index];
         };
 
-        ///РќР°Р±РѕСЂ РїРѕР·РёС†РёР№ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ СЃСѓРјРјРёСЂРѕРІР°РЅРёСЏ
+        ///Набор позиций для выполнения суммирования
         const size_vec_t& expand() const {
             return _expand;
         }
     private:
 
         //========
-        //  РџРѕР»СЏ
+        //  Поля
         //========
         data_vec_t  _position;
         size_vec_t  _expand;
         //========
-        // РњРµС‚РѕРґС‹
+        // Методы
         //========
 
-        ///Р’С‹С‡РёСЃР»РµРЅРёРµ РІРµРєС‚РѕСЂР° РІРµРєС‚РѕСЂРѕРІ СЃ РїРѕР·РёС†РёСЏРјРё
+        ///Вычисление вектора векторов с позициями
         data_vec_t  _computePosition(const base_wave_t* newBaseSineWave) {
 
             size_vec_t  primeFactors = _computeFactors(newBaseSineWave);
@@ -135,7 +135,7 @@ class Fft : public FourierTransform
         };
 
 
-        ///Р’С‹С‡РёСЃР»РµРЅРёРµ РµРґРёРЅРѕРіРѕ РЅР°Р±РѕСЂР° РїРѕР·РёС†РёР№ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ СЃСѓРјРјРёСЂРѕРІР°РЅРёСЏ
+        ///Вычисление единого набора позиций для выполнения суммирования
         size_vec_t  _computeExpand(const data_vec_t& inputPosition) {
 
             size_vec_t tmpExpand;
@@ -152,7 +152,7 @@ class Fft : public FourierTransform
         };
 
 
-        ///Р’С‹С‡РёСЃР»РµРЅРёРµ РІРµРєС‚РѕСЂР° РїСЂРѕСЃС‚С‹С… РјРЅРѕР¶РёС‚РµР»РµР№
+        ///Вычисление вектора простых множителей
         static
         size_vec_t _computeFactors(const base_wave_t* newBaseSineWave) {
 
@@ -178,7 +178,7 @@ class Fft : public FourierTransform
 
     };
 
-    ///РљР»Р°СЃСЃ РјР°РєРµС‚Р° Р±Р°Р·С‹
+    ///Класс макета базы
     class Base
     {
     public:
@@ -246,15 +246,15 @@ public:
         double             initnAngle       = defaultZero(),
         double             initAmplitude    = defaultOne());
 
-    ///Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕР№ РІРµР»РёС‡РёРЅС‹ Рё РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С…
+    ///Добавление новой величины и обновление данных
     void update(double newValue) override;
 
 
-    ///РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РЅР° РЅРѕРІСѓСЋ СЌС‚Р°Р»РѕРЅРЅСѓСЋ СЃРёРЅСѓСЃРѕРёРґСѓ
+    ///Переключение на новую эталонную синусоиду
     virtual void setNewBase(const base_wave_t* newBaseSineWave) override;
 
 
-    ///РЈСЃС‚Р°РЅРѕРІРєР° РЅР°Р±РѕСЂР° РІС‹С‡РёСЃР»СЏРµРјС‹С… РіР°СЂРјРѕРЅРёРє
+    ///Установка набора вычисляемых гармоник
     virtual void setNewHarmonicalSet(const size_vec_t& newSet) override;
 
 
@@ -265,51 +265,51 @@ public:
 private:
 
     //========
-    //  РџРѕР»СЏ
+    //  Поля
     //========
 
-    ///РњР°РєРµС‚ СЃРІРµСЂС‚РєРё
+    ///Макет свертки
     Convolution     _convolutionLayout;//
 
-    ///РњР°РєРµС‚ Р±Р°Р·С‹
+    ///Макет базы
     Base            _baseLayout;//
 
-    ///РњР°С‚СЂРёС†Р° СЃРІРµСЂС‚РєРё
+    ///Матрица свертки
     ring_base_t     _convolutionData;
 
-    ///РњР°С‚СЂРёС†Р° Р±Р°Р·С‹
+    ///Матрица базы
     ring_base_t     _baseData;//
 
-    ///Р РµР·СѓР»СЊС‚Р°С‚ СЂР°СЃС‡РµС‚Р° РјР°С‚СЂРёС†С‹ Р±Р°Р·С‹
+    ///Результат расчета матрицы базы
     complex_vec_t   _baseResult;//
 
 
     //========
-    // РњРµС‚РѕРґС‹
+    // Методы
     //========
 
-    ///РћР±РЅРѕРІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ Р±Р°Р·С‹
+    ///Обновление элементов базы
     void _updateBase(const complex_t& newValue);// noexcept;
 
 
-    ///РћР±РЅРѕРІР»РµРЅРёРµ РІРµРєС‚РѕСЂР° СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РІС‹С‡РёСЃР»РµРЅРёСЏ РіР°СЂРјРѕРЅРёРє Рё РјР°С‚СЂРёС†С‹ СЃРІРµСЂС‚РєРё
+    ///Обновление вектора результатов вычисления гармоник и матрицы свертки
     void _updateResult();// noexcept;
 
 
-    ///Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РјР°С‚СЂРёС†С‹ СЃРІРµСЂС‚РєРё
+    ///Формирование матрицы свертки
     ring_base_t _initConvolutionData(size_t newHarmonicsNumber,
                                      size_t newConvolutionLength);
 
-    ///Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РјР°С‚СЂРёС†С‹ Р±Р°Р·С‹
+    ///Формирование матрицы базы
     ring_base_t _initBaseData(size_t newBaseLayoutSize,
                               size_t newBaseLayoutStep);
 
 
-    ///Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РІРµРєС‚РѕСЂР° СЂР°СЃС‡РµС‚Р° РјР°С‚СЂРёС†С‹ Р±Р°Р·С‹
+    ///Формирование вектора расчета матрицы базы
     complex_vec_t _initBaseResult(size_t newBaseLayoutSize);
 
 
-    ///РќР°Р±РѕСЂ РІС‹С‡РёСЃР»СЏРµРјС‹С… РіР°СЂРјРѕРЅРёРє РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+    ///Набор вычисляемых гармоник по умолчанию
     static const size_vec_t defaultHarmonicsFft() {
         return size_vec_t{0, 1, 2, 3, 5};
     };

@@ -41,25 +41,29 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="include/BaseSineWave.h" />
-		<Unit filename="include/Convolution.h" />
 		<Unit filename="include/Dft.h" />
 		<Unit filename="include/Fft.h" />
 		<Unit filename="include/FourierTransform.h" />
 		<Unit filename="include/Rdft.h" />
-		<Unit filename="include/ReferenceSineWave.h" />
 		<Unit filename="include/RingBuffer.h" />
 		<Unit filename="include/SignalGenerate.h" />
-		<Unit filename="include/Step.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BaseSineWave.cpp" />
-		<Unit filename="src/Convolution.cpp" />
 		<Unit filename="src/Dft.cpp" />
 		<Unit filename="src/Fft.cpp" />
 		<Unit filename="src/FourierTransform.cpp" />
 		<Unit filename="src/Rdft.cpp" />
-		<Unit filename="src/ReferenceSineWave.cpp" />
 		<Unit filename="src/SignalGenerate.cpp" />
-		<Unit filename="src/Step.cpp" />
-		<Extensions />
+		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="2" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

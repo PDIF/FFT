@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include "BaseSineWave.h"
 #include "RingBuffer.h"
 
@@ -14,42 +15,35 @@ class FourierTransform
     using complex_vec_t  = std::vector<complex_t>;
     using ring_complex_t = RingBuffer<complex_t>;
 
-    ///РљР»Р°СЃСЃ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІР°Р»РёРґРЅРѕСЃС‚Рё Р±Р°Р·РѕРІРѕР№ СЃРёРЅСѓСЃРѕРёРґС‹
+    ///Класс для проверки валидности базовой синусоиды
     class Valid
     {
     public:
 
-        Valid(const base_wave_t* initValidWave)
+        Valid(const base_wave_t* initValidWave) noexcept
         : _validWave( initValidWave)
-        , _size     (_getSize())
+        , _size     ( initValidWave->size())
         { };
 
-        bool isValid(const base_wave_t* checkedWave) const {
+        bool isValid(const base_wave_t* checkedWave) const noexcept {
 
-            return _validWave  && _size        &&
-                   _validWave  ==  checkedWave &&
-                   _size       ==  checkedWave->size();
+            return (_validWave == checkedWave)   &&
+                   (_size == checkedWave->size() );
         };
 
     private:
-
         const base_wave_t* _validWave;
         size_t             _size;
-
-        //РџРѕР»СѓС‡РµРЅРёРµ СЂР°Р·РјРµСЂР° Р±СѓС„РµСЂР° РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ
-        size_t _getSize() {
-            return (_validWave ? _validWave->size() : 0);
-        };
     };
 
 public:
 
     //========
-    // РњРµС‚РѕРґС‹
+    // Методы
     //========
 
     FourierTransform(
-        const base_wave_t* initBaseSineWave = nullptr,
+        const base_wave_t* initBaseSineWave,
         const size_vec_t&  initHarmonics    = defaultHarmonics(),
         double             initnAngle       = defaultZero(),
         double             initAmplitude    = defaultOne());
@@ -57,112 +51,120 @@ public:
     virtual ~FourierTransform();
 
 
-    ///Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕР№ РІРµР»РёС‡РёРЅС‹ Рё РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С…
+    ///Добавление новой величины и обновление данных
     virtual void update(double newValue) = 0;
 
 
-    ///РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РЅР° РЅРѕРІСѓСЋ СЌС‚Р°Р»РѕРЅРЅСѓСЋ СЃРёРЅСѓСЃРѕРёРґСѓ
+    ///Переключение на новую эталонную синусоиду
     virtual void setNewBase(const base_wave_t* newBaseSineWave) = 0;
 
 
-    ///РЈСЃС‚Р°РЅРѕРІРєР° РЅР°Р±РѕСЂР° РІС‹С‡РёСЃР»СЏРµРјС‹С… РіР°СЂРјРѕРЅРёРє
+    ///Установка набора вычисляемых гармоник
     virtual void setNewHarmonicalSet(const size_vec_t& newSet) = 0;
 
 
-    ///РЈСЃС‚Р°РЅРѕРІРєР° РєРѕРјРїР»РµРєСЃРЅРѕРіРѕ РјРЅРѕР¶РёС‚РµР»СЏ РєРѕСЂСЂРµРєС†РёРё
+    ///Установка комплексного множителя коррекции
     virtual void setCorrection(double angle = 0.0, double amplitude = 1.0);
 
 
-    ///РџРѕР»СѓС‡РµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ РєРѕРјРїР»РµРєСЃРЅРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РіР°СЂРјРѕРЅРёРєРё
-    const complex_t& getData(size_t harmonic) const;
+    ///Получение текущего комплексного значения гармоники
+    const complex_t& getData(size_t harmonic) const noexcept;
 
 
-    ///РџРѕР»СѓС‡РµРЅРёРµ РІРµРєС‚РѕСЂР° РєРѕРјРїР»РµРєСЃРЅС‹С… Р·РЅР°С‡РµРЅРёР№ РЅР°Р±РѕСЂР° РіР°СЂРјРѕРЅРёРє
-    const complex_vec_t& getData() const;
+    ///Получение вектора комплексных значений набора гармоник
+    const complex_vec_t& getData() const noexcept;
 
 protected:
 
     //========
-    //  РџРѕР»СЏ
+    //  Поля
     //========
 
-    ///РќР°Р±РѕСЂ РіР°СЂРјРѕРЅРёРє, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РІС‹С‡РёСЃР»РёС‚СЊ
+    ///Набор гармоник, которые необходимо вычислить
     size_vec_t      _harmonics;
 
 
-    ///Р’РµРєС‚РѕСЂ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РІС‹С‡РёСЃР»РµРЅРёСЏ РіР°СЂРјРѕРЅРёРє
+    ///Вектор результатов вычисления гармоник
     complex_vec_t   _result;
 
 
-    ///РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЌС‚Р°Р»РѕРЅРЅСѓСЋ СЃРёРЅСѓСЃРѕРёРґСѓ
+    ///Указатель на эталонную синусоиду
     const
     base_wave_t*    _baseSineWave;
 
 
-    ///Р’РµРєС‚РѕСЂ РјРіРЅРѕРІРµРЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№
+    ///Вектор мгновенных значений
     ring_complex_t  _instant;
 
 
-    ///РљРѕРјРїР»РµРєСЃРЅС‹Р№ РјРЅРѕР¶РёС‚РµР»СЊ РєРѕСЂСЂРµРєС†РёРё РІС…РѕРґРЅРѕРіРѕ СЃРёРіРЅР°Р»Р°
+    ///Комплексный множитель коррекции входного сигнала
     complex_t       _correction;
 
 
-    ///РљРѕРјРїР»РµРєСЃРЅС‹Р№ РЅРѕР»СЊ
+    ///Комплексный ноль
     static constexpr complex_t _zero = complex_t(0.0, 0.0);
 
 
-    ///РљРѕРјРїР»РµРєСЃРЅР°СЏ РµРґРёРЅРёС†Р°
+    ///Комплексная единица
     static constexpr complex_t _one  = complex_t(1.0, 0.0);
 
 
     //========
-    // РњРµС‚РѕРґС‹
+    // Методы
     //========
 
-    ///РџСЂРѕРІРµСЂРєР° РІР°Р»РёРґРЅРѕСЃС‚Рё СѓРєР°Р·Р°С‚РµР»СЏ РЅР° Р±Р°Р·РѕРІСѓСЋ СЃРёРЅСѓСЃРѕРёРґСѓ
-    bool isValid() const;
+    ///Проверка валидности указателя на базовую синусоиду
+    bool isValid() const noexcept;
 
 
-    ///РРЅРёС†РёР°Р»РёР·Р°РёСЏ РІРµРєС‚РѕСЂР° РјРіРЅРѕРІРµРЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№
-    ring_complex_t  _initInstant();
-
-
-    ///РќР°РёР±РѕР»РµРµ РІРѕСЃС‚СЂРµР±РѕРІР°РЅРЅС‹Р№ РЅР°Р±РѕСЂ РІС‹С‡РёСЃР»СЏРµРјС‹С… РіР°СЂРјРѕРЅРёРє
+    ///Наиболее востребованный набор вычисляемых гармоник
     static const size_vec_t defaultHarmonics() {
         return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
     };
 
-    static constexpr double defaultZero() {
+    static constexpr double defaultZero() noexcept {
         return 0.0;
     };
 
-    static constexpr double defaultOne() {
+    static constexpr double defaultOne() noexcept {
         return 1.0;
     };
 
-    static constexpr double zeroHarmonicalMultiplier() {
+    static constexpr double zeroHarmonicalMultiplier() noexcept {
         return 0.5;
     };
 
 private:
 
     //========
-    //  РџРѕР»СЏ
+    //  Поля
     //========
 
-    //РљРѕСЂСЂРµРєС‚РёСЂСѓСЋС‰РёРµ РїР°СЂР°РјРµС‚СЂС‹, РЅРµ Р·Р°РІРёСЃСЏС‰РёРµ РѕС‚ СЂР°Р·РјРµСЂР° Р±Р°Р·РѕРІРѕР№ СЃРёРЅСѓСЃРѕРёРґС‹
+    //Корректирующие параметры, не зависящие от размера базовой синусоиды
     double    _angle;
     double    _amplitude;
 
-    //РџСЂРѕРІРµСЂРєР° РІР°Р»РёРґРЅРѕСЃС‚Рё
+    //Проверка валидности
     Valid     _valid;
 
     //========
-    // РњРµС‚РѕРґС‹
+    // Методы
     //========
 
-    //Р’С‹С‡РёСЃР»РµРЅРёРµ РєРѕРјРїР»РµРєСЃРЅРѕРіРѕ РјРЅРѕР¶РёС‚РµР»СЏ РєРѕСЂСЂРµРєС†РёРё
-    complex_t _computeCorrection(double angle, double amplitude);
+    ///Инициализация вектора искомых гармоник
+    size_vec_t  _initHarmonics(const size_vec_t& initHarmonics);
+
+    ///Инициализация вектора вычисленных значений гармоник
+    complex_vec_t  _initResult(const size_vec_t& initHarmonics);
+
+    ///Инициализация эталонной синусоиды
+    const base_wave_t*  _initBaseSineWave(const base_wave_t* initBaseSineWave);
+
+    ///Инициализаия вектора мгновенных значений
+    ring_complex_t  _initInstant(const base_wave_t* initBaseSineWave);
+
+    ///Инициализация комплексного множителя для коррекции входного сигнала
+    complex_t  _initCorrection(double angle, double amplitude) noexcept;
 
 };
 

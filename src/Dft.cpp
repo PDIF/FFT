@@ -26,8 +26,10 @@ Dft::~Dft()
 void Dft::update(double newValue)
 {
     if (!FourierTransform::isValid()) {
-        return;
+
+        throw std::length_error{"Unauthorized base sine wave modification"};
     };
+
 
     complex_t complexValue(FourierTransform::_correction * newValue);
 

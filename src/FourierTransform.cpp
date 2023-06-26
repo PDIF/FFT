@@ -11,11 +11,11 @@ FourierTransform::FourierTransform(
     const size_vec_t&  initHarmonics,
     double             initAngle,
     double             initAmplitude)
-: _harmonics   ( initHarmonics)
-, _result      ( complex_vec_t(initHarmonics.size(), _zero))
-, _baseSineWave( initBaseSineWave)
-, _instant     (_initInstant())
-, _correction  (_computeCorrection(initAngle,  initAmplitude))
+: _harmonics   (_initHarmonics(initHarmonics))
+, _result      (_initResult(initHarmonics))
+, _baseSineWave(_initBaseSineWave(initBaseSineWave))
+, _instant     (_initInstant(initBaseSineWave))
+, _correction  (_initCorrection(initAngle,  initAmplitude))
 , _angle       ( initAngle)
 , _amplitude   ( initAmplitude)
 , _valid       ( Valid(initBaseSineWave))
@@ -30,42 +30,48 @@ FourierTransform::~FourierTransform()
 };
 
 
-void FourierTransform::setNewHarmonicalSet(const size_vec_t& newHarmonicalSet)
-{
-    _harmonics = newHarmonicalSet;
-    _result    = complex_vec_t(newHarmonicalSet.size(), _zero);
-};
-
-
+//Переключение на новую эталонную синусоиду
 void FourierTransform::setNewBase(const base_wave_t* newBaseSineWave)
 {
-    _baseSineWave =  newBaseSineWave;
-    _correction   = _computeCorrection(_angle, _amplitude);
+    //Обнуление вектора результатов в связи с переходом на новую базу
+    _result       = _initResult(_harmonics);
 
-     //РћР±РЅСѓР»РµРЅРёРµ РІРµРєС‚РѕСЂР° СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РІ СЃРІСЏР·Рё СЃ РїРµСЂРµС…РѕРґРѕРј РЅР° РЅРѕРІСѓСЋ Р±Р°Р·Сѓ
-    _result       =  complex_vec_t(_harmonics.size(), _zero);
+     //Базовая синусоида
+    _baseSineWave = _initBaseSineWave(newBaseSineWave);
 
-    //РР·РјРµРЅРµРЅРёРµ СЂР°Р·РјРµСЂР° РІРµРєС‚РѕСЂР° РјРіРЅРѕРІРµРЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№
-    _instant      = _initInstant();
+     //Изменение размера вектора мгновенных значений
+    _instant      = _initInstant(newBaseSineWave);
 
-    //РћР±РЅРѕРІР»РµРЅРёРµ РїРµСЂРµРјРµРЅРЅРѕР№ РІР°Р»РёРґРЅРѕСЃС‚Рё
-    _valid       =   Valid(newBaseSineWave);
+     //Пересчет вектора коррекции
+    _correction   = _initCorrection(_angle, _amplitude);
+
+     //Обновление переменной валидности
+    _valid        =  Valid(newBaseSineWave);
+
 };
 
 
+//Установка набора вычисляемых гармоник
+void FourierTransform::setNewHarmonicalSet(const size_vec_t& newHarmonicalSet)
+{
+    _harmonics = _initHarmonics(newHarmonicalSet);
+    _result    = _initResult(newHarmonicalSet);
+};
+
+
+//Установка комплексного множителя коррекции
 void FourierTransform::setCorrection(double angle, double amplitude)
 {
     _angle      =  angle;
     _amplitude  =  amplitude;
-    _correction = _computeCorrection(_angle, _amplitude);
+    _correction = _initCorrection(angle, amplitude);
 };
 
 
-const complex_t& FourierTransform::getData(size_t harmonic) const
+//Получение текущего комплексного значения гармоники
+const complex_t& FourierTransform::getData(size_t harmonic) const noexcept
 {
     auto itFound =  std::find(_harmonics.begin(), _harmonics.end(), harmonic);
-
-    //assert(itFound != _harmonics.end() && "Needed harmonic is not calculated");
 
     if (itFound != _harmonics.end()) {
 
@@ -78,41 +84,82 @@ const complex_t& FourierTransform::getData(size_t harmonic) const
 };
 
 
-const complex_vec_t& FourierTransform::getData() const
+//Получение вектора комплексных значений набора гармоник
+const complex_vec_t& FourierTransform::getData() const noexcept
 {
     return _result;
 };
 
 
-bool FourierTransform::isValid() const
+//Проверка валидности указателя на базовую синусоиду
+bool FourierTransform::isValid() const noexcept
 {
     return _valid.isValid(_baseSineWave);
 }
 
 
-ring_complex_t  FourierTransform::_initInstant()
+//Инициализация вектора искомых гармоник
+size_vec_t FourierTransform::_initHarmonics(const size_vec_t& initHarmonics)
 {
-    if (!_baseSineWave) {
-        return ring_complex_t(0);
+    if (initHarmonics.size() == 0) {
+        throw std::logic_error{"There is no harmonic set to calculate"};
     };
 
-    return ring_complex_t(_baseSineWave->size());
+    return initHarmonics;
 };
 
 
-complex_t FourierTransform::_computeCorrection(double newAngle,
-                                               double newAmplitude)
+//Инициализация вектора вычисленных значений гармоник
+complex_vec_t FourierTransform::_initResult(const size_vec_t& initHarmonics)
 {
-    if (!_baseSineWave) {
-        return _zero;
+    try {
+        return complex_vec_t(initHarmonics.size(), _zero);
+    } catch (...) {
+        throw;
+    };
+};
+
+
+//Инициализация эталонной синусоиды
+const base_wave_t* FourierTransform::_initBaseSineWave(
+                       const base_wave_t* initBaseSineWave)
+{
+    if (!initBaseSineWave) {
+        throw std::logic_error{"Empty pointer to reference sine wave"};
     };
 
+    if (!(initBaseSineWave->size())) {
+        throw std::logic_error{"Empty reference sine wave"};
+    };
+
+    return initBaseSineWave;
+};
 
 
+//Инициализаия вектора мгновенных значений
+ring_complex_t  FourierTransform::_initInstant(
+                    const base_wave_t* initBaseSineWave)
+{
+    try {
+        return ring_complex_t(_baseSineWave->size());
+    } catch (...) {
+        throw;
+    }
+};
 
-    complex_t tmpAmplitude = 2.0 * newAmplitude / _baseSineWave->size();
-    complex_t tmpImage     = complex_t(0.0, base_wave_t::Pi::degToRad(newAngle));
-    complex_t tmpRotate    = std::exp(tmpImage);
 
-    return tmpAmplitude * tmpRotate;
+//Инициализация комплексного множителя для коррекции входного сигнала
+complex_t FourierTransform::_initCorrection(
+              double newAngle, double newAmplitude) noexcept
+{
+    complex_t tmpRotate;
+
+    try {
+        tmpRotate = std::exp(complex_t{defaultZero(),
+                                       base_wave_t::Pi::degToRad(newAngle)});
+    } catch (...) {
+        tmpRotate = _one;
+    };
+
+    return 2.0 * newAmplitude * tmpRotate * (1.0 / _baseSineWave->size());
 };

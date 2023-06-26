@@ -1,7 +1,7 @@
 #ifndef RDFT_H
 #define RDFT_H
 
-#include "RingBuffer.h"
+//#include "RingBuffer.h"
 #include "FourierTransform.h"
 
 class Rdft : public FourierTransform
@@ -11,7 +11,7 @@ class Rdft : public FourierTransform
     using complex_t     = std::complex<double>;
     using complex_vec_t = std::vector<complex_t>;
 
-    ///РљР»Р°СЃСЃ РїРѕРґСЃС‡РµС‚Р° С€Р°РіРѕРІ РґР»СЏ СѓС‡РµС‚Р° РєРѕРјРїРµРЅСЃР°С†РёРё РІС‹С‡РёСЃР»РёС‚РµР»СЊРЅРѕР№ РїРѕРіСЂРµС€РЅРѕСЃС‚Рё
+    ///Класс подсчета шагов для учета компенсации вычислительной погрешности
     class RotateStep
     {
     public:
@@ -64,30 +64,30 @@ public:
 
     virtual ~Rdft();
 
-    ///Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕР№ РІРµР»РёС‡РёРЅС‹ Рё РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С…
+    ///Добавление новой величины и обновление данных
     void update(double newValue) override;
 
-    ///РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РЅР° РЅРѕРІСѓСЋ СЌС‚Р°Р»РѕРЅРЅСѓСЋ СЃРёРЅСѓСЃРѕРёРґСѓ
+    ///Переключение на новую эталонную синусоиду
     void setNewBase(const BaseSineWave* newBaseSineWave) override;
 
-    ///РЈСЃС‚Р°РЅРѕРІРєР° РЅР°Р±РѕСЂР° РІС‹С‡РёСЃР»СЏРµРјС‹С… РіР°СЂРјРѕРЅРёРє
+    ///Установка набора вычисляемых гармоник
     virtual void setNewHarmonicalSet(const size_vec_t& newSet) override;
 
 private:
 
     //========
-    //  РџРѕР»СЏ
+    //  Поля
     //========
 
-    //РљРѕРјРїРµРЅСЃР°С†РёСЏ РІС‹С‡РёСЃР»РёС‚РµР»СЊРЅРѕР№ РїРѕРіСЂРµС€РЅРѕСЃС‚Рё
+    //Компенсация вычислительной погрешности
     RotateStep      _rotateStep;
     complex_vec_t   _rotateFactor;
 
     //========
-    // РњРµС‚РѕРґС‹
+    // Методы
     //========
 
-    ///Р’С‹С‡РёСЃР»РµРЅРёРµ РєРѕСЂСЂРµРєС‚РёСЂСѓСЋС‰РµРіРѕ РјРЅРѕР¶РёС‚РµР»СЏ РїРѕ РіР°СЂРјРѕРЅРёРєР°Рј
+    ///Вычисление корректирующего множителя по гармоникам
     complex_vec_t   _computeCorrectionFactor();
 
 };

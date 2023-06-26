@@ -19,30 +19,35 @@ BaseSineWave::~BaseSineWave()
 
 BaseSineWave::Step BaseSineWave::_setStep(size_t initStep)
 {
+    if (initStep > maxSize() || initStep < minSize()) {
+        throw std::length_error{
+                  "Exceeding the allowed step number in BaseSineWave"};
+    };
     return Step(initStep);
 };
 
 
 complex_vec_t BaseSineWave::_setWave(size_t initStep)
 {
-    complex_vec_t tmpWave(initStep, complex_t(1.0, 0.0));
+    try {
 
-    for (size_t i = 1; i < initStep; ++i) {
-        tmpWave[i] = std::exp(complex_t(0.0, i * 2.0 * Pi::rad / initStep));
+        complex_vec_t tmpWave(initStep, complex_t(1.0, 0.0));
+
+        for (size_t i = 1; i < initStep; ++i) {
+            tmpWave[i] = std::exp(complex_t(0.0, i * 2.0 * Pi::rad / initStep));
+        };
+
+        return tmpWave;
+
+    } catch (...) {
+
+        throw;
     };
 
-    return tmpWave;
 };
 
 
-void  BaseSineWave::update(size_t newSize)
-{
-    step     = _setStep(newSize);
-   _sineWave = _setWave(newSize);
-};
-
-
-size_t BaseSineWave::size() const
+size_t BaseSineWave::size() const noexcept
 {
     return step.count();
 };

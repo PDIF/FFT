@@ -36,7 +36,8 @@ Fft::~Fft()
 void Fft::update(double newValue)// noexcept
 {
     if (!FourierTransform::isValid()) {
-        return;
+
+        throw std::length_error{"Unauthorized base sine wave modification"};
     };
 
     complex_t complexValue(FourierTransform::_correction * newValue);
@@ -79,7 +80,7 @@ void Fft::setNewHarmonicalSet(const size_vec_t& newSet)
 void Fft::_updateBase(const complex_t& newValue) //noexcept
 {
 
-    //РћР±РЅРѕРІР»РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ СЂР°СЃС‡РµС‚Р° Р±Р°Р·С‹
+    //Обновление результатов расчета базы
     for (size_t i = 0; i < _baseLayout.size(); ++i) {
 
        _baseResult[i]      =  newValue;
@@ -91,7 +92,7 @@ void Fft::_updateBase(const complex_t& newValue) //noexcept
         };
     };
 
-    //Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РІ РјР°С‚СЂРёС†Сѓ Р±Р°Р·С‹
+    //Добавление нового значения в матрицу базы
     size_t degree = 0;
 
     for (auto& row : _baseData) {
@@ -110,19 +111,19 @@ void Fft::_updateResult()// noexcept
         complex_t resultHarmonic  = _baseResult[currentHarmonic %
                                                _baseLayout.size()];
 
-        //РћР±РЅРѕРІР»РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ СЂР°СЃС‡РµС‚Р° С‚РµРєСѓС‰РµР№ РіР°СЂРјРѕРЅРёРєРё
+        //Обновление результатов расчета текущей гармоники
        _result[i] = resultHarmonic;
 
         for (const auto& position : _convolutionLayout.expand()) {
            _result[i] += sourceHarmonic[position];
         };
 
-        //РћР±РЅРѕРІР»РµРЅРёРµ РјР°С‚СЂРёС†С‹ СЃРІРµСЂС‚РєРё
+        //Обновление матрицы свертки
         complex_t   adding          =  resultHarmonic *
                                        (*_baseSineWave)[currentHarmonic];
         const auto& sizeSineWave    = _baseSineWave->size();
         const auto& sizeConvolution = _convolutionLayout.size();
-        //1. РћР±СЂР°Р±РѕС‚РєР° РјР°С‚СЂРёС†С‹ СЃРІРµСЂС‚РєРё РґРѕ РїСЂРµРґРїРѕСЃР»РµРґРЅРµРіРѕ РЅР°Р±РѕСЂР° РїРѕР·РёС†РёР№
+        //1. Обработка матрицы свертки до предпоследнего набора позиций
         for (size_t j = 0; j + 1 < sizeConvolution; ++j) {
 
             const auto& positionSet = _convolutionLayout[j];
@@ -143,7 +144,7 @@ void Fft::_updateResult()// noexcept
             sourceHarmonic[position] = resultHarmonic *
                                        (*_baseSineWave)[degree];
         };
-        //2. РћР±СЂР°Р±РѕС‚РєР° РїРѕСЃР»РµРґРЅРµРіРѕ РЅР°Р±РѕСЂР° РїРѕР·РёС†РёР№ РјР°С‚СЂРёС†С‹ СЃРІРµСЂС‚РєРё
+        //2. Обработка последнего набора позиций матрицы свертки
         const auto& lastPosition = _convolutionLayout[sizeConvolution - 1];
         size_t      degree       =  lastPosition.degree *
                                     currentHarmonic % sizeSineWave;
