@@ -2,15 +2,12 @@
 
 #include <fstream>
 #include <complex>
+#include <ctime>
 
 #include "Fft.h"
 #include "Dft.h"
 #include "Rdft.h"
 #include "BaseSineWave.h"
-
-#include<ctime>
-
-using namespace std;
 
 int main()
 {
@@ -38,7 +35,6 @@ int main()
     std::vector<size_t> harmonicsSet{1, 3, 5};
 
     BaseSineWave baseSineWave(steps);
-
 
     Dft  dft(&baseSineWave, harmonicsSet);
     Fft  fft(&baseSineWave, harmonicsSet);
@@ -81,7 +77,6 @@ int main()
     std::cout << "RDFT values:\t" << rdft.getData(harmonic) <<
                  "\t" << abs(rdft.getData(harmonic)) << "\n";
     std::cout << "RDFT time: " << endTime - startTime << "\n\n";
-
 
 
     //6. The usual DFT 1st harmonic for comparison
