@@ -42,14 +42,18 @@ The project implements the following classes:
 
    Example of using the Dft class
 
-=================================================================================
+=========================================================
+   
    //Initialization and filling of the basic sine wave by 8 points per period
+   
    BaseSineWave baseSineWave(8);       		
 
    //Instantiation DFT for calculatind 1, 2, 3 harmonical values
+   
    Dft  dft(&baseSineWave, {1, 2, 3});	
 
    //Adding new values
+   
    dft.update(2.0);
    dft.update(1.4142);
    dft.update(0);
@@ -61,14 +65,16 @@ The project implements the following classes:
    dft.update(2.0);
 
    //Getting results
+   
    std::cout << dft.getData(1) << "\t" << dft.getData(2) << "\t" << dft.getData(3) << "\t";
-=================================================================================   
 
+=========================================================
 
    Information is displayed on the monitor:
-
+   
    (1.99999,-3.38786e-016) (0,0)   (9.59005e-006,2.71837e-016)
-=================================================================================
+   
+=========================================================
 
 
 
