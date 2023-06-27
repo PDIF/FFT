@@ -6,7 +6,7 @@ The project implements the following classes:
 
    All classes are designed to implement the same functionality: complex amplitudes calculation of required harmonics set. The classes efficiency is determined by the processing time of the same text file containing the harmonic signal instantaneous values.
 
-   To DFT calculation, the following files *.h and *.cpp must be included to the project:
+To DFT calculation, the following files *.h and *.cpp must be included to the project:
    - BaseSineWave;
    - FourierTransform;
    - RingBuffer;
@@ -106,5 +106,7 @@ The interface of the Fft and Rdft classes does not differ from the described Dft
    - RingBuffer;
    - Rdft.
 
+     
+# main.cpp
 
 main.cpp used for checking results and comparing classes.
