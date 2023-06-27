@@ -18,7 +18,7 @@ int main()
     //1. Reading data from file
     auto startTime = clock();
 
-    std::ifstream       reading("values 4");
+    std::ifstream       reading("TestData");
     std::string         line;
     std::vector<double> instant;
 
@@ -35,7 +35,7 @@ int main()
 
     size_t harmonic = 1;
     size_t steps    = 96;
-    std::vector<size_t> harmonicsSet{1, 3, 5, 7};
+    std::vector<size_t> harmonicsSet{1, 3, 5};
 
     BaseSineWave baseSineWave(steps);
 
@@ -46,8 +46,6 @@ int main()
 
     endTime = clock();
     std::cout << "Preparing objects time: " << endTime - startTime << "\n\n";
-
-
 
     //3. Information process Dft
     startTime = clock();

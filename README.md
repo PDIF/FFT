@@ -28,4 +28,65 @@ The project implements the following classes:
    dft.update(newDoubleValue);
 
    After an each new value addition, the set of complex amplitudes is calculated with data of the last period of the industrial frequency.
+
+4. The calculation result (the complex amplitude value) can be obtained by executing the getData(size_t) command:
+
+   dft.getData(neededSize_tHarmonic);
+
+   If the desired harmonic was not specified when creating an instance of the class (second parameter which sets harmonics dataset), the getData(size_t) command will return a complex zero.
+
+5. The results vector of calculating the harmonics complex values can be obtained using the getData() command:
+
+   dft.getData(neededSize_tHarmonic).
+
+
+   Example of using the Dft class
+
+=================================================================================
+   //Initialization and filling of the basic sine wave by 8 points per period
+   BaseSineWave baseSineWave(8);       		
+
+   //Instantiation DFT for calculatind 1, 2, 3 harmonical values
+   Dft  dft(&baseSineWave, {1, 2, 3});	
+
+   //Adding new values
+   dft.update(2.0);
+   dft.update(1.4142);
+   dft.update(0);
+   dft.update(-1.4142);
+   dft.update(-2.0);
+   dft.update(-1.4142);
+   dft.update(0);
+   dft.update(1.4142);
+   dft.update(2.0);
+
+   //Getting results
+   std::cout << dft.getData(1) << "\t" << dft.getData(2) << "\t" << dft.getData(3) << "\t";
+=================================================================================   
+
+
+   Information is displayed on the monitor:
+
+   (1.99999,-3.38786e-016) (0,0)   (9.59005e-006,2.71837e-016)
+=================================================================================
+
+
+
+The interface of the Fft and Rdft classes does not differ from the described Dft interface.
+
      
+   To FFT calculation, the following files *.h and *.cpp must be included to the project:
+   - BaseSineWave;
+   - FourierTransform;
+   - RingBuffer;
+   - Fft.
+
+
+   To RDFT calculation, the following files *.h and *.cpp must be included to the project:
+   - BaseSineWave;
+   - FourierTransform;
+   - RingBuffer;
+   - Rdft.
+
+
+main.cpp used for checking results and comparing classes.
