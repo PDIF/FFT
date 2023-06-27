@@ -1,4 +1,4 @@
-# FFT
+# DFT
 The project implements the following classes:
 1. Discrete Fourier Transform (DFT).
 2. Fast Fourier Transform (FFT),
@@ -15,35 +15,36 @@ The project implements the following classes:
    Working with the class is carried out in the following order:
 1. A basic sinusoidal wave is formed with the required number of points per period of industrial frequency setting:
    
-   BaseSineWave baseSineWave(96);
+   `BaseSineWave baseSineWave(96);`
 
 2. The Dft class instance is created, where the first parameter is reference of the baseSineWave, second (optional) parameter is std::vector<size_t> set of calculated harmonics, third and fourth (optional) parameters is correctional angle (degree) and amplitude (p.u.):
 
-   Dft  dft(&baseSineWave, {1});
+   `Dft  dft(&baseSineWave, {1});`
 
    If second parameter (set of calculating harmonics) is absent, then the following harmonics will be calculated: 1, 3, 5.
 
 3. New value of the double type adding is done by the update(double) command:
 
-   dft.update(newDoubleValue);
+   `dft.update(newDoubleValue);`
 
    After an each new value addition, the set of complex amplitudes is calculated with data of the last period of the industrial frequency.
 
 4. The calculation result (the complex amplitude value) can be obtained by executing the getData(size_t) command:
 
-   dft.getData(neededSize_tHarmonic);
+   `dft.getData(neededSize_tHarmonic);`
 
    If the desired harmonic was not specified when creating an instance of the class (second parameter which sets harmonics dataset), the getData(size_t) command will return a complex zero.
 
 5. The results vector of calculating the harmonics complex values can be obtained using the getData() command:
 
-   dft.getData(neededSize_tHarmonic).
+   `dft.getData(neededSize_tHarmonic).`
 
 
    Example of using the Dft class
 
-=========================================================
-   
+
+```C++
+
    //Initialization and filling of the basic sine wave by 8 points per period
    
    BaseSineWave baseSineWave(8);       		
@@ -55,28 +56,39 @@ The project implements the following classes:
    //Adding new values
    
    dft.update(2.0);
+   
    dft.update(1.4142);
+   
    dft.update(0);
+   
    dft.update(-1.4142);
+   
    dft.update(-2.0);
+   
    dft.update(-1.4142);
+   
    dft.update(0);
+   
    dft.update(1.4142);
+   
    dft.update(2.0);
 
    //Getting results
    
    std::cout << dft.getData(1) << "\t" << dft.getData(2) << "\t" << dft.getData(3) << "\t";
 
-=========================================================
-
+```
+  
    Information is displayed on the monitor:
    
+```C++
+
    (1.99999,-3.38786e-016) (0,0)   (9.59005e-006,2.71837e-016)
-   
-=========================================================
+
+```   
 
 
+# FFT and RDFT
 
 The interface of the Fft and Rdft classes does not differ from the described Dft interface.
 
