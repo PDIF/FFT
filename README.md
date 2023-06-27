@@ -6,12 +6,13 @@ The project implements the following classes:
 
    All classes are designed to implement the same functionality: complex amplitudes calculation of required harmonics set. The classes efficiency is determined by the processing time of the same text file containing the harmonic signal instantaneous values.
 
-   To DFT calculation, the following files *.h and *.cpp must be connected to the project:
+   To DFT calculation, the following files *.h and *.cpp must be included to the project:
    - BaseSineWave;
    - FourierTransform;
    - RingBuffer;
    - Dft.
-  Working with the class is carried out in the following order:
+
+   Working with the class is carried out in the following order:
 1. A basic sinusoidal wave is formed with the required number of points per period of industrial frequency setting:
    
    BaseSineWave baseSineWave(96);
@@ -20,7 +21,7 @@ The project implements the following classes:
 
    Dft  dft(&baseSineWave, {1});
 
-   If necessary set of harmonics  absent then Dft instance, the following harmonics will be calculated: 1, 3, 5.
+   If second parameter (set of calculating harmonics) is absent, then the following harmonics will be calculated: 1, 3, 5.
 
 3. New value of the double type adding is done by the update(double) command:
 
