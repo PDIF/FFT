@@ -6,104 +6,117 @@
 #include "Fft.h"
 #include "Dft.h"
 #include "Rdft.h"
-
-#include<ctime>
-
 #include "BaseSineWave.h"
 
+#include<ctime>
 
 using namespace std;
 
 int main()
 {
-auto startTime = clock();
 
-    std::ifstream reading("values");
-    std::string   line;
-    std::vector<double> data;
+    //1. Reading data from file
+    auto startTime = clock();
 
+    std::ifstream       reading("values 4");
+    std::string         line;
+    std::vector<double> instant;
 
-    while (std::getline(reading, line))
-    {
-        data.push_back(stod(line));
+    while (std::getline(reading, line)) {
+        instant.push_back(stod(line));
     };
     reading.close();
-
-auto endTime = clock();
-std::cout << "Reading time: " << endTime - startTime << "\n";
-
-
-    BaseSineWave baseSineWave(96);
-
-std::cout << "Preparing sine wave time: " << endTime - startTime << "\n";
-
-startTime = clock();
-
-    Fft  fft(&baseSineWave, {0, 1, 2, 3, 5});
-    Dft  dft(&baseSineWave, {1});
-    Rdft rdft(&baseSineWave);
+    auto endTime = clock();
+    std::cout << "Reading data time: " << endTime - startTime << "\n\n";
 
 
-/*
-    for(auto i : data) {
-        fft.update(i);
-        dft.update(i);
-        rdft.update(i);
-
-        //std::cout << fft.value(1) << "\t" << dft.value() << "\t" << rdft.value() << "\n";
-
-        //writing << abs(fft.value(1)) << "\t" << abs(dft.value()) << "\t" << abs(rdft.value()) << "\n";
-    }
-
-    */
-
-    //writing.close();
-
-    //std::swap(bbb, ccc);
-
-    //std::cout << abs(fft.value(1)) << "\t" << abs(dft.value()) << "\t" << abs(rdft.value()) << "\n";
-
-endTime = clock();
-std::cout << "Preparing objects time: " << endTime - startTime << "\n\n";
-
+    //2. Preparing objects time
+    startTime = clock();
 
     size_t harmonic = 1;
+    size_t steps    = 96;
+    std::vector<size_t> harmonicsSet{1, 3, 5, 7};
+
+    BaseSineWave baseSineWave(steps);
 
 
-startTime = clock();
+    Dft  dft(&baseSineWave, harmonicsSet);
+    Fft  fft(&baseSineWave, harmonicsSet);
+    Rdft rdft(&baseSineWave, harmonicsSet);
 
-    for(auto i : data) {
-        fft.update(i);
-    }
-    std::cout << "fft :\t" << fft.getData(harmonic) << "\t" << abs(fft.getData(harmonic)) << "\n";
-
-endTime = clock();
-
-std::cout << "TotalTime FFT: " << endTime - startTime << "\n\n";
-
-
-startTime = clock();
-
-    for(auto i : data) {
-        dft.update(i);
-    }
-    std::cout << "dft :\t" << dft.getData(harmonic) << "\t" << abs(dft.getData(harmonic)) << "\n";
-endTime = clock();
-std::cout << "TotalTime DFT: " << endTime - startTime << "\n\n";
-
-
-startTime = clock();
-    for(auto i : data) {
-        rdft.update(i);
-    }
-    std::cout << "rdft :\t" << rdft.getData(harmonic) << "\t" << abs(rdft.getData(harmonic)) << "\n";
-
-endTime = clock();
-std::cout << "TotalTime RDFT: " << endTime - startTime << "\n\n";
+    endTime = clock();
+    std::cout << "Preparing objects time: " << endTime - startTime << "\n\n";
 
 
 
-    std::cout << "BBBB: " << BaseSineWave::Pi::deg << "\n";
+    //3. Information process Dft
+    startTime = clock();
+    for(auto& value : instant) {
+        dft.update(value);
+    };
+
+    endTime = clock();
+    std::cout << "DFT values:\t" << dft.getData(harmonic) <<
+                 "\t" << abs(dft.getData(harmonic)) << "\n";
+    std::cout << "DFT time: " << endTime - startTime << "\n\n";
+
+
+    //4. Information process Fft
+    startTime = clock();
+    for(auto& value : instant) {
+        fft.update(value);
+    };
+
+    endTime = clock();
+    std::cout << "FFT values:\t" << fft.getData(harmonic) <<
+                 "\t" << abs(fft.getData(harmonic)) << "\n";
+    std::cout << "FFT time: " << endTime - startTime << "\n\n";
+
+
+    //5. Information process Rdft
+    startTime = clock();
+    for(auto& value : instant) {
+        rdft.update(value);
+    };
+
+    endTime = clock();
+    std::cout << "RDFT values:\t" << rdft.getData(harmonic) <<
+                 "\t" << abs(rdft.getData(harmonic)) << "\n";
+    std::cout << "RDFT time: " << endTime - startTime << "\n\n";
+
+
+
+    //6. The usual DFT 1st harmonic for comparison
+    double pi = std::acos(-1.0);
+    std::complex<double>              one{1.0, 0.0};
+    std::complex<double>              result{0.0, 0.0};
+    std::vector<std::complex<double>> base(steps, one);
+    std::vector<double>               valuesData(steps, 0.0);
+
+    for (size_t i = 1; i < steps; ++i) {
+        std::complex<double> power{0.0, 2.0 * pi * i / steps};
+        base[i] = std::exp(power);
+    };
+
+    startTime = clock();
+
+    for (auto& value: instant) {
+        result        = valuesData[0];
+        valuesData[0] = valuesData[1];
+
+        for (size_t i = 1; i < steps; ++i) {
+            result += valuesData[i] * base[steps - i];
+            valuesData[i] = valuesData[i + 1];
+        };
+
+        valuesData[steps - 1] = value;
+    };
+    endTime = clock();
+
+    std::cout << "Usual DFT values:\t" << result * (2.0 / steps) <<
+                 "\t" << abs(result * (2.0 / steps)) << "\n";
+    std::cout << "Usual DFT time: " << endTime - startTime << "\n\n";
+
 
     return 0;
 }

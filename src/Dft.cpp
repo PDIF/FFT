@@ -1,8 +1,7 @@
 #include "Dft.h"
 
-
-using complex_t   = std::complex<double>;
 using base_wave_t = BaseSineWave;
+using complex_t   = std::complex<double>;
 using size_vec_t  = std::vector<size_t>;
 
 Dft::Dft(
@@ -29,7 +28,6 @@ void Dft::update(double newValue)
 
         throw std::length_error{"Unauthorized base sine wave modification"};
     };
-
 
     complex_t complexValue(FourierTransform::_correction * newValue);
 

@@ -1,7 +1,6 @@
 #ifndef RDFT_H
 #define RDFT_H
 
-//#include "RingBuffer.h"
 #include "FourierTransform.h"
 
 class Rdft : public FourierTransform

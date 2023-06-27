@@ -19,10 +19,16 @@ BaseSineWave::~BaseSineWave()
 
 BaseSineWave::Step BaseSineWave::_setStep(size_t initStep)
 {
-    if (initStep > maxSize() || initStep < minSize()) {
+    if (initStep > maxSize()) {
         throw std::length_error{
                   "Exceeding the allowed step number in BaseSineWave"};
     };
+
+    if (initStep < minSize()){
+        throw std::length_error{
+                  "Step number in BaseSineWave too small"};
+    };
+
     return Step(initStep);
 };
 

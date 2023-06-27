@@ -4,15 +4,9 @@
 
 #include <complex>
 #include <vector>
-#include <algorithm>
 
-#include <assert.h>
-
-#include <iostream>
 #include "ReferenceSineWave.h"
-//#include "RingBuffer.h"
-
-
+#include "BaseSineWave.h"
 #include "FourierTransform.h"
 
 
@@ -35,37 +29,15 @@ class Fft : public FourierTransform
         //Дружественный класс
         friend class Base;
 
-        ///Класс содержимого макета свертки
-        class Data
+        ///Структура для хранения одного элемента свертки
+        struct Data
         {
-        public:
-
-            Data(const size_t& initDegree, const size_vec_t& initPosition)
-            :  degree(initDegree)
-            , _position(initPosition)
-            { };
-
             ///Степень элемента свертки для первой гармоники
-            const size_t  degree;
+            const size_t  power;
 
-            ///Позиция элемента свертки текущей степени
-            const size_t& operator[](size_t index) const {
-                return _position[index];
-            };
-
-            ///Количество позиций элементов свертки текущей степени
-            size_t size() const {
-                return _position.size();
-            };
-
-            ///Позиция последнего элемента свертки текущей степени
-            size_t back() const{
-                return _position.back();
-            };
-
-        private:
             ///Вектор позиций элементов текущей степени
-            const size_vec_t _position;
+            const size_vec_t position;
+
         };
 
         using data_vec_t     = std::vector<Data>;
@@ -78,12 +50,14 @@ class Fft : public FourierTransform
         { };
 
         ///Общий размер вектора для хранения значений свертки
-        const size_t length(){
-            return _position.back().back() + 1;
+        const size_t length() const noexcept {
+            return   _position.size() > 0
+                   ? _position.back().position.back() + 1
+                   :  0;
         };
 
         ///Количество степеней свертки
-        const size_t size() const {
+        const size_t size() const noexcept {
             return _position.size();
         };
 
@@ -93,9 +67,10 @@ class Fft : public FourierTransform
         };
 
         ///Набор позиций для выполнения суммирования
-        const size_vec_t& expand() const {
+        const size_vec_t& expand() const noexcept {
             return _expand;
-        }
+        };
+
     private:
 
         //========
@@ -107,7 +82,7 @@ class Fft : public FourierTransform
         // Методы
         //========
 
-        ///Вычисление вектора векторов с позициями
+        ///Вычисление вектора векторов позиций суммируемых элементов и степеней
         data_vec_t  _computePosition(const base_wave_t* newBaseSineWave) {
 
             size_vec_t  primeFactors = _computeFactors(newBaseSineWave);
@@ -139,12 +114,10 @@ class Fft : public FourierTransform
         size_vec_t  _computeExpand(const data_vec_t& inputPosition) {
 
             size_vec_t tmpExpand;
-            //tmpExpand.resize(Convolution::size());
 
             for (const auto& data : inputPosition) {
-                for (size_t i = 0; i < data.size(); ++i) {
-                    tmpExpand.push_back(data[i]);
-                    std::cout << data[i] << " ";
+                for (size_t i = 0; i < data.position.size(); ++i) {
+                    tmpExpand.push_back(data.position[i]);
                 };
             };
 
@@ -158,10 +131,10 @@ class Fft : public FourierTransform
 
 
             size_vec_t tmpPrimeFactor;
-            size_t     currentSize       = newBaseSineWave->size();
-            size_t     currentMultiplier = 2;
+            size_t currentSize       = newBaseSineWave->size();
+            size_t currentMultiplier = 2;
 
-            assert(currentSize > 0);
+            //assert(currentSize > 0);
 
             while (currentSize > 1) {
                 if (!(currentSize % currentMultiplier)) {
@@ -172,7 +145,7 @@ class Fft : public FourierTransform
                 };
             };
 
-            assert(tmpPrimeFactor.size() > 0);
+            //assert(tmpPrimeFactor.size() > 0);
             return {tmpPrimeFactor.crbegin() + 1, tmpPrimeFactor.crend()};
         };
 
@@ -249,10 +222,8 @@ public:
     ///Добавление новой величины и обновление данных
     void update(double newValue) override;
 
-
     ///Переключение на новую эталонную синусоиду
     virtual void setNewBase(const base_wave_t* newBaseSineWave) override;
-
 
     ///Установка набора вычисляемых гармоник
     virtual void setNewHarmonicalSet(const size_vec_t& newSet) override;
@@ -289,31 +260,24 @@ private:
     //========
 
     ///Обновление элементов базы
-    void _updateBase(const complex_t& newValue);// noexcept;
-
+    void _updateBase(const complex_t& newValue) noexcept;
 
     ///Обновление вектора результатов вычисления гармоник и матрицы свертки
-    void _updateResult();// noexcept;
-
+    void _updateResult() noexcept;
 
     ///Формирование матрицы свертки
     ring_base_t _initConvolutionData(size_t newHarmonicsNumber,
                                      size_t newConvolutionLength);
-
     ///Формирование матрицы базы
     ring_base_t _initBaseData(size_t newBaseLayoutSize,
                               size_t newBaseLayoutStep);
-
-
     ///Формирование вектора расчета матрицы базы
     complex_vec_t _initBaseResult(size_t newBaseLayoutSize);
-
 
     ///Набор вычисляемых гармоник по умолчанию
     static const size_vec_t defaultHarmonicsFft() {
         return size_vec_t{0, 1, 2, 3, 5};
     };
-
 
 };
 

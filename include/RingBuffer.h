@@ -61,12 +61,9 @@ private:
     size_t         _current;
 
 
-    ///Установка корректного размера буфера
+    ///Установка размера буфера
     size_t _setBufferSize(size_t newBufferSize)
     {
-        if (newBufferSize < minSize()) { //(newBufferSize > maxSize() || newBufferSize < minSize()) {
-            throw std::length_error{"Exceeding the allowed buffer size"};
-        };
         return newBufferSize;
     };
 
@@ -121,13 +118,14 @@ private:
         return 300;
     };
     */
-
+    /*
     ///Минимально допустимый размер буфера
     static constexpr size_t minSize() noexcept
     {
         // Должна быть, как минимум, одна точка
         return 1;
     };
+    */
 
 };
 

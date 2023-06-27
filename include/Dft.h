@@ -1,13 +1,12 @@
 #ifndef DFT_H
 #define DFT_H
 
-//#include "RingBuffer.h"
 #include "FourierTransform.h"
 
 class Dft : public FourierTransform
 {
-    using complex_t   = std::complex<double>;
     using base_wave_t = BaseSineWave;
+    using complex_t   = std::complex<double>;
     using size_vec_t  = std::vector<size_t>;
 
 public:
@@ -22,14 +21,11 @@ public:
     ///Добавление новой величины и обновление данных
     void update(double newValue) override;
 
-
     ///Переключение на новую эталонную синусоиду
     void setNewBase(const BaseSineWave* newBaseSineWave) override;
 
-
     ///Установка набора вычисляемых гармоник
     virtual void setNewHarmonicalSet(const size_vec_t& newSet) override;
-
 
 private:
 
