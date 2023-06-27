@@ -32,7 +32,7 @@ int main()
 
     size_t harmonic = 1;
     size_t steps    = 96;
-    std::vector<size_t> harmonicsSet{1, 3, 5};
+    std::vector<size_t> harmonicsSet{1, 2, 3};
 
     BaseSineWave baseSineWave(steps);
 

@@ -5,7 +5,6 @@
 #include <complex>
 #include <vector>
 
-#include "ReferenceSineWave.h"
 #include "BaseSineWave.h"
 #include "FourierTransform.h"
 
