@@ -4,8 +4,14 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <map>
+
+#include "boost/circular_buffer.hpp"
+
 #include "BaseSineWave.h"
-#include "RingBuffer.h"
+
+#include <iostream>
+
 
 class FourierTransform
 {
@@ -13,7 +19,12 @@ class FourierTransform
     using size_vec_t     = std::vector<size_t>;
     using complex_t      = std::complex<double>;
     using complex_vec_t  = std::vector<complex_t>;
-    using ring_complex_t = RingBuffer<complex_t>;
+    using ring_complex_t = boost::circular_buffer<complex_t>;
+
+    using size_map_t     = std::map<size_t, complex_t>;
+
+
+
 
     ///Класс для проверки валидности базовой синусоиды
     class Valid
@@ -44,7 +55,7 @@ public:
 
     FourierTransform(
         const base_wave_t* initBaseSineWave,
-        const size_vec_t&  initHarmonics    = defaultHarmonics(),
+        const size_map_t&  initHarmonics    = defaultHarmonics(),
         double             initnAngle       = defaultZero(),
         double             initAmplitude    = defaultOne());
 
@@ -81,8 +92,8 @@ protected:
     //========
 
     ///Набор гармоник, которые необходимо вычислить
-    size_vec_t      _harmonics;
-
+    //size_vec_t      _harmonics;
+    size_map_t      _harmonics;
 
     ///Вектор результатов вычисления гармоник
     complex_vec_t   _result;
@@ -118,9 +129,14 @@ protected:
 
 
     ///Наиболее востребованный набор вычисляемых гармоник
-    static const size_vec_t defaultHarmonics() {
-        return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
+//    static const size_vec_t defaultHarmonics() {
+//        return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
+//    };
+
+    static const size_map_t defaultHarmonics() {
+        return size_map_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
     };
+
 
     static constexpr double defaultZero() noexcept {
         return 0.0;

@@ -3,6 +3,8 @@
 using base_wave_t = BaseSineWave;
 using complex_t   = std::complex<double>;
 using size_vec_t  = std::vector<size_t>;
+using complex_vec_t  = std::vector<complex_t>;
+
 
 Dft::Dft(
     const base_wave_t* initBaseSineWave,
@@ -24,26 +26,43 @@ Dft::~Dft()
 
 void Dft::update(double newValue)
 {
-    if (!FourierTransform::isValid()) {
-
-        throw std::length_error{"Unauthorized base sine wave modification"};
-    };
+//    if (!FourierTransform::isValid()) {
+//
+//        throw std::length_error{"Unauthorized base sine wave modification"};
+//    };
 
     complex_t complexValue(FourierTransform::_correction * newValue);
 
    _instant.push_front(complexValue);
 
-    for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
+    std::fill(_result.begin(), _result.end(), complexValue);
 
-        size_t harmonic = FourierTransform::_harmonics[i];
-       _result[i] = _instant[0];
+    const auto& size = _baseSineWave->size();
 
-        for (size_t j = 1; j < _baseSineWave->size(); ++j) {
+    auto current = _result.begin();
 
-             size_t _position = j * harmonic % _baseSineWave->size();
-            _result[i] += _instant[j] * (*_baseSineWave)[_position];
+    for (const auto& harmonic : FourierTransform::_harmonics) {
+
+        //size_t harmonic = FourierTransform::_harmonics[i];
+
+        size_t position = 0;
+
+        for (size_t j = 1; j < size; ++j) {
+
+             position += harmonic;
+
+             if (position >= size) {
+                 position -= size;
+             }
+            //_result[i] += _instant[j] * (*_baseSineWave)[position];
+
+            *current += _instant[j] * _baseSineWave->operator[](position);
         };
+
+        ++current;
+
     };
+
 };
 
 

@@ -16,6 +16,7 @@
 					<Add option="-std=c17" />
 					<Add option="-g" />
 					<Add directory="include" />
+					<Add directory="D:/Programs/Boost/boost_1_82_0" />
 				</Compiler>
 				<Linker>
 					<Add directory="include" />
@@ -29,7 +30,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="include" />
-					<Add directory="./" />
+					<Add directory="D:/Programs/Boost/boost_1_82_0" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -45,7 +46,6 @@
 		<Unit filename="include/Fft.h" />
 		<Unit filename="include/FourierTransform.h" />
 		<Unit filename="include/Rdft.h" />
-		<Unit filename="include/RingBuffer.h" />
 		<Unit filename="include/SignalGenerate.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BaseSineWave.cpp" />

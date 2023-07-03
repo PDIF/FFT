@@ -8,6 +8,7 @@ class Dft : public FourierTransform
     using base_wave_t = BaseSineWave;
     using complex_t   = std::complex<double>;
     using size_vec_t  = std::vector<size_t>;
+    using complex_vec_t  = std::vector<complex_t>;
 
 public:
 

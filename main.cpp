@@ -9,6 +9,13 @@
 #include "Rdft.h"
 #include "BaseSineWave.h"
 
+#include <assert.h>
+
+
+
+
+
+
 int main()
 {
 
@@ -32,7 +39,7 @@ int main()
 
     size_t harmonic = 1;
     size_t steps    = 96;
-    std::vector<size_t> harmonicsSet{1, 3, 5};
+    std::vector<size_t> harmonicsSet{1};
 
     BaseSineWave baseSineWave(steps);
 
@@ -111,5 +118,13 @@ int main()
     std::cout << "Usual DFT time: " << endTime - startTime << "\n\n";
 
 
+
+
+
+
+    boost::circular_buffer<int> bcb(3);
+    bcb.push_front(1);
+    bcb.push_front(2);
+    bcb.push_front(3);
     return 0;
 }

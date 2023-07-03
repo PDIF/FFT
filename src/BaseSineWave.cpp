@@ -62,4 +62,5 @@ size_t BaseSineWave::size() const noexcept
 const complex_t&  BaseSineWave::operator[](size_t index) const
 {
     return _sineWave[index];
+    //return _sineWave.at(index);
 }

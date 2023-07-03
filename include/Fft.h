@@ -9,6 +9,7 @@
 #include "BaseSineWave.h"
 #include "FourierTransform.h"
 
+#include "boost/circular_buffer.hpp"
 
 class Fft : public FourierTransform
 {
@@ -17,7 +18,9 @@ class Fft : public FourierTransform
     using size_matrix_t  = std::vector<size_vec_t>;
     using complex_t      = std::complex<double>;
     using complex_vec_t  = std::vector<complex_t>;
-    using ring_complex_t = RingBuffer<complex_t>;
+    //using ring_complex_t = RingBuffer<complex_t>;
+    using ring_complex_t = boost::circular_buffer<complex_t>;
+
     using ring_base_t    = std::vector<ring_complex_t>;
 
     //ќбъ€вление базового класса дл€ подключени€ к нему дружественных методов

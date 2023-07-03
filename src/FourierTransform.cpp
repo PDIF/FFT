@@ -4,7 +4,7 @@ using base_wave_t    = BaseSineWave;
 using size_vec_t     = std::vector<size_t>;
 using complex_t      = std::complex<double>;
 using complex_vec_t  = std::vector<complex_t>;
-using ring_complex_t = RingBuffer<complex_t>;
+using ring_complex_t = boost::circular_buffer<complex_t>;
 
 FourierTransform::FourierTransform(
     const base_wave_t* initBaseSineWave,
@@ -21,6 +21,11 @@ FourierTransform::FourierTransform(
 , _valid       ( Valid(initBaseSineWave))
 {
     //ctor
+
+    std::cout << _instant.size() << "\n";
+
+
+
 };
 
 
@@ -141,7 +146,7 @@ ring_complex_t  FourierTransform::_initInstant(
                     const base_wave_t* initBaseSineWave)
 {
     try {
-        return ring_complex_t(_baseSineWave->size());
+        return ring_complex_t(_baseSineWave->size(), _zero);
     } catch (...) {
         throw;
     }

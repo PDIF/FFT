@@ -15,6 +15,9 @@ Rdft::Rdft(
 , _rotateFactor    (_computeCorrectionFactor())
 {
     //ctor
+
+
+
 };
 
 

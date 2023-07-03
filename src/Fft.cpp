@@ -4,7 +4,8 @@ using base_wave_t    = BaseSineWave;
 using size_vec_t     = std::vector<size_t>;
 using complex_t      = std::complex<double>;
 using complex_vec_t  = std::vector<complex_t>;
-using ring_complex_t = RingBuffer<complex_t>;
+//using ring_complex_t = RingBuffer<complex_t>;
+using ring_complex_t = boost::circular_buffer<complex_t>;
 using ring_base_t    = std::vector<ring_complex_t>;
 
 
@@ -169,7 +170,7 @@ ring_base_t Fft::_initConvolutionData(size_t newHarmonicsNumber,
 {
     return ring_base_t(
                newHarmonicsNumber,
-               ring_complex_t(newConvolutionLength));
+               ring_complex_t(newConvolutionLength, _zero));
 };
 
 
@@ -178,7 +179,8 @@ ring_base_t Fft::_initBaseData(size_t newBaseLayoutSize,
 {
     return ring_base_t(
                newBaseLayoutSize,
-               ring_complex_t((newBaseLayoutSize - 1) * newBaseLayoutStep));
+               ring_complex_t((newBaseLayoutSize - 1) * newBaseLayoutStep,
+                              _zero));
 };
 
 
