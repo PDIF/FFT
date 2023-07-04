@@ -19,11 +19,8 @@ class FourierTransform
     using size_vec_t     = std::vector<size_t>;
     using complex_t      = std::complex<double>;
     using complex_vec_t  = std::vector<complex_t>;
+    using complex_map_t  = std::map<size_t, complex_t>;
     using ring_complex_t = boost::circular_buffer<complex_t>;
-
-    using size_map_t     = std::map<size_t, complex_t>;
-
-
 
 
     ///Класс для проверки валидности базовой синусоиды
@@ -55,7 +52,7 @@ public:
 
     FourierTransform(
         const base_wave_t* initBaseSineWave,
-        const size_map_t&  initHarmonics    = defaultHarmonics(),
+        const size_vec_t&  initHarmonics    = defaultHarmonics(),
         double             initnAngle       = defaultZero(),
         double             initAmplitude    = defaultOne());
 
@@ -79,11 +76,11 @@ public:
 
 
     ///Получение текущего комплексного значения гармоники
-    const complex_t& getData(size_t harmonic) const noexcept;
+    const complex_t& getData(size_t harmonic) const;
 
 
     ///Получение вектора комплексных значений набора гармоник
-    const complex_vec_t& getData() const noexcept;
+    const complex_map_t& getData() const;
 
 protected:
 
@@ -91,12 +88,8 @@ protected:
     //  Поля
     //========
 
-    ///Набор гармоник, которые необходимо вычислить
-    //size_vec_t      _harmonics;
-    size_map_t      _harmonics;
-
     ///Вектор результатов вычисления гармоник
-    complex_vec_t   _result;
+    complex_map_t   _result;
 
 
     ///Указатель на эталонную синусоиду
@@ -129,12 +122,8 @@ protected:
 
 
     ///Наиболее востребованный набор вычисляемых гармоник
-//    static const size_vec_t defaultHarmonics() {
-//        return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
-//    };
-
-    static const size_map_t defaultHarmonics() {
-        return size_map_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
+    static const size_vec_t defaultHarmonics() {
+        return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
     };
 
 
@@ -167,20 +156,24 @@ private:
     // Методы
     //========
 
-    ///Инициализация вектора искомых гармоник
-    size_vec_t  _initHarmonics(const size_vec_t& initHarmonics);
+    ///Очистка вектора вычисленных значений гармоник
+    void               _clearResult() noexcept;
+
 
     ///Инициализация вектора вычисленных значений гармоник
-    complex_vec_t  _initResult(const size_vec_t& initHarmonics);
+    complex_map_t      _initResult(const size_vec_t& initVecHarmonics);
+
 
     ///Инициализация эталонной синусоиды
-    const base_wave_t*  _initBaseSineWave(const base_wave_t* initBaseSineWave);
+    const base_wave_t* _initBaseSineWave(const base_wave_t* initBaseSineWave);
+
 
     ///Инициализаия вектора мгновенных значений
-    ring_complex_t  _initInstant(const base_wave_t* initBaseSineWave);
+    ring_complex_t     _initInstant(const base_wave_t* initBaseSineWave);
+
 
     ///Инициализация комплексного множителя для коррекции входного сигнала
-    complex_t  _initCorrection(double angle, double amplitude) noexcept;
+    complex_t          _initCorrection(double angle, double amplitude) noexcept;
 
 };
 

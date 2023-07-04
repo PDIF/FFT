@@ -3,16 +3,16 @@
 using base_wave_t    = BaseSineWave;
 using size_vec_t     = std::vector<size_t>;
 using complex_t      = std::complex<double>;
-using complex_vec_t  = std::vector<complex_t>;
 using ring_complex_t = boost::circular_buffer<complex_t>;
+using complex_map_t  = std::map<size_t, complex_t>;
+
 
 FourierTransform::FourierTransform(
     const base_wave_t* initBaseSineWave,
     const size_vec_t&  initHarmonics,
     double             initAngle,
     double             initAmplitude)
-: _harmonics   (_initHarmonics(initHarmonics))
-, _result      (_initResult(initHarmonics))
+: _result      (_initResult(initHarmonics))
 , _baseSineWave(_initBaseSineWave(initBaseSineWave))
 , _instant     (_initInstant(initBaseSineWave))
 , _correction  (_initCorrection(initAngle,  initAmplitude))
@@ -21,11 +21,6 @@ FourierTransform::FourierTransform(
 , _valid       ( Valid(initBaseSineWave))
 {
     //ctor
-
-    std::cout << _instant.size() << "\n";
-
-
-
 };
 
 
@@ -35,11 +30,51 @@ FourierTransform::~FourierTransform()
 };
 
 
+//Установка набора вычисляемых гармоник
+void FourierTransform::setNewHarmonicalSet(const size_vec_t& newHarmonicalSet)
+{
+//    _harmonics = _initHarmonics(newHarmonicalSet);
+    _result    = _initResult(newHarmonicalSet);
+};
+
+
+//Установка комплексного множителя коррекции
+void FourierTransform::setCorrection(double angle, double amplitude)
+{
+    _angle      =  angle;
+    _amplitude  =  amplitude;
+    _correction = _initCorrection(angle, amplitude);
+};
+
+
+//Получение текущего комплексного значения гармоники
+const complex_t& FourierTransform::getData(size_t harmonic) const
+{
+    if (_result.find(harmonic) != _result.end()) {
+        return _result.at(harmonic);
+    };
+
+    throw std::logic_error{"There is no calculating harmonic"};
+};
+
+
+//Получение вектора комплексных значений набора гармоник
+const complex_map_t& FourierTransform::getData() const
+{
+    return _result;
+};
+
+
+
+//==================
+// Публичные методы
+//==================
+
 //Переключение на новую эталонную синусоиду
 void FourierTransform::setNewBase(const base_wave_t* newBaseSineWave)
 {
     //Обнуление вектора результатов в связи с переходом на новую базу
-    _result       = _initResult(_harmonics);
+    _clearResult();
 
      //Базовая синусоида
     _baseSineWave = _initBaseSineWave(newBaseSineWave);
@@ -56,45 +91,10 @@ void FourierTransform::setNewBase(const base_wave_t* newBaseSineWave)
 };
 
 
-//Установка набора вычисляемых гармоник
-void FourierTransform::setNewHarmonicalSet(const size_vec_t& newHarmonicalSet)
-{
-    _harmonics = _initHarmonics(newHarmonicalSet);
-    _result    = _initResult(newHarmonicalSet);
-};
 
-
-//Установка комплексного множителя коррекции
-void FourierTransform::setCorrection(double angle, double amplitude)
-{
-    _angle      =  angle;
-    _amplitude  =  amplitude;
-    _correction = _initCorrection(angle, amplitude);
-};
-
-
-//Получение текущего комплексного значения гармоники
-const complex_t& FourierTransform::getData(size_t harmonic) const noexcept
-{
-    auto itFound =  std::find(_harmonics.begin(), _harmonics.end(), harmonic);
-
-    if (itFound != _harmonics.end()) {
-
-        size_t  index = std::distance(_harmonics.begin(), itFound);
-
-        return _result[index];
-    };
-
-    return _zero;
-};
-
-
-//Получение вектора комплексных значений набора гармоник
-const complex_vec_t& FourierTransform::getData() const noexcept
-{
-    return _result;
-};
-
+//===================
+// Защищенные методы
+//===================
 
 //Проверка валидности указателя на базовую синусоиду
 bool FourierTransform::isValid() const noexcept
@@ -103,22 +103,31 @@ bool FourierTransform::isValid() const noexcept
 }
 
 
-//Инициализация вектора искомых гармоник
-size_vec_t FourierTransform::_initHarmonics(const size_vec_t& initHarmonics)
-{
-    if (initHarmonics.size() == 0) {
-        throw std::logic_error{"There is no harmonic set to calculate"};
-    };
 
-    return initHarmonics;
+//==================
+// Приватные методы
+//==================
+
+//Очистка вектора вычисленных значений гармоник
+void FourierTransform::_clearResult() noexcept
+{
+    for (auto& harmonic : _result) {
+        harmonic.second = _zero;
+    }
 };
 
 
 //Инициализация вектора вычисленных значений гармоник
-complex_vec_t FourierTransform::_initResult(const size_vec_t& initHarmonics)
+complex_map_t FourierTransform::_initResult(const size_vec_t& initVecHarmonics)
 {
     try {
-        return complex_vec_t(initHarmonics.size(), _zero);
+
+        complex_map_t tmpResult;
+        for (auto const& harmonic: initVecHarmonics) {
+            tmpResult[harmonic] = _zero;
+        };
+        return tmpResult;
+
     } catch (...) {
         throw;
     };
@@ -158,7 +167,6 @@ complex_t FourierTransform::_initCorrection(
               double newAngle, double newAmplitude) noexcept
 {
     complex_t tmpRotate;
-
     try {
         tmpRotate = std::exp(complex_t{defaultZero(),
                                        base_wave_t::Pi::degToRad(newAngle)});
@@ -168,3 +176,4 @@ complex_t FourierTransform::_initCorrection(
 
     return 2.0 * newAmplitude * tmpRotate * (1.0 / _baseSineWave->size());
 };
+

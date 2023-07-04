@@ -18,7 +18,7 @@ Fft::Fft(
 , _convolutionLayout( Convolution(initBaseSineWave))
 , _baseLayout       ( Base(initBaseSineWave))
 , _convolutionData  (_initConvolutionData(
-                         _harmonics.size(),
+                         _result.size(),
                          _convolutionLayout.length()))
 , _baseData         (_initBaseData(
                          _baseLayout.size(),
@@ -57,7 +57,7 @@ void Fft::setNewBase(const base_wave_t* newBaseSineWave)
    _convolutionLayout =  Convolution(newBaseSineWave);
    _baseLayout        =  Base(newBaseSineWave);
    _convolutionData   = _initConvolutionData(
-                            _harmonics.size(),
+                            _result.size(),
                             _convolutionLayout.length());
    _baseData          = _initBaseData(
                             _baseLayout.size(),
@@ -71,7 +71,7 @@ void Fft::setNewHarmonicalSet(const size_vec_t& newSet)
     FourierTransform::setNewHarmonicalSet(newSet);
 
    _convolutionData   = _initConvolutionData(
-                            _harmonics.size(),
+                            _result.size(),
                             _convolutionLayout.length());
 };
 
@@ -102,7 +102,21 @@ void Fft::_updateBase(const complex_t& newValue) noexcept
 
 void Fft::_updateResult() noexcept
 {
-    for (size_t i = 0; i < _harmonics.size(); ++i) {
+    for (auto& [harmonic, value] : _result) {
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+    for (size_t i = 0; i < _result.size(); ++i) {
 
         size_t    currentHarmonic = _harmonics[i];
         auto&     sourceHarmonic  = _convolutionData[i];

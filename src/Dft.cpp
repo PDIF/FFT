@@ -35,33 +35,56 @@ void Dft::update(double newValue)
 
    _instant.push_front(complexValue);
 
-    std::fill(_result.begin(), _result.end(), complexValue);
+    //std::fill(_result.begin(), _result.end(), complexValue);
 
+    /*
+    for (auto& [harmonic, value] : _result) {
+        value = complexValue;
+    };
+*/
     const auto& size = _baseSineWave->size();
 
-    auto current = _result.begin();
+    for (auto& [harmonic, value] : _result) {
 
-    for (const auto& harmonic : FourierTransform::_harmonics) {
-
-        //size_t harmonic = FourierTransform::_harmonics[i];
+        value = complexValue;
 
         size_t position = 0;
-
         for (size_t j = 1; j < size; ++j) {
 
-             position += harmonic;
+            position += harmonic;
 
-             if (position >= size) {
-                 position -= size;
-             }
-            //_result[i] += _instant[j] * (*_baseSineWave)[position];
+            if (position >= size) {
+                position -= size;
+            };
 
-            *current += _instant[j] * _baseSineWave->operator[](position);
+            value += _instant[j] * _baseSineWave->operator[](position);
         };
 
-        ++current;
+    }
 
-    };
+
+//
+//
+//    auto  resultHarmonic = _result.begin();
+//
+//    for (const auto& harmonic : FourierTransform::_result) {
+//
+//        size_t position = 0;
+//
+//        for (size_t j = 1; j < size; ++j) {
+//
+//            position += harmonic.first;
+//
+//            if (position >= size) {
+//                position -= size;
+//            }
+//
+//            resultHarmonic->second += _instant[j] *
+//                                      _baseSineWave->operator[](position);
+//        };
+//
+//        ++resultHarmonic;
+//    };
 
 };
 
