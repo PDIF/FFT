@@ -16,10 +16,11 @@
 					<Add option="-std=c17" />
 					<Add option="-g" />
 					<Add directory="include" />
-					<Add directory="D:/Programs/Boost/boost_1_82_0" />
+					<Add directory="$(#boost)" />
 				</Compiler>
 				<Linker>
 					<Add directory="include" />
+					<Add directory="$(#boost)" />
 				</Linker>
 			</Target>
 			<Target title="Release">

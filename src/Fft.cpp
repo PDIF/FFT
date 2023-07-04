@@ -102,15 +102,61 @@ void Fft::_updateBase(const complex_t& newValue) noexcept
 
 void Fft::_updateResult() noexcept
 {
+
+    const auto& sizeSineWave    = _baseSineWave->size();
+    const auto& sizeConvolution = _convolutionLayout.size();
+
     for (auto& [harmonic, value] : _result) {
+
+        auto& convolution = _convolutionData[harmonic];
+
+        //¬ычисление значени€ текущей гармоники
+        value = _baseResult[harmonic % _baseLayout.size()];
+
+        for (const auto& position : _convolutionLayout.expand()) {
+            value += convolution[position];
+        };
+
+
+        //ќбновление свертки
+        if (sizeConvolution > 0) {
+
+            //1. ќбработка матрицы свертки до предпоследнего набора позиций
+            for (size_t j = 0; j < sizeConvolution - 1; ++j) {
+
+                const auto& positionSet = _convolutionLayout[j];
+
+                for (size_t k = 0; k + 1 < positionSet.position.size(); ++k) {
+
+                    size_t     power    = positionSet.power *
+                                          currentHarmonic % sizeSineWave;
+                    const auto position = positionSet.position[k];
+                    resultHarmonic     += sourceHarmonic[position];
+                    sourceHarmonic[position] *= (*_baseSineWave)[power];
+                };
+
+                size_t power    = _convolutionLayout[j + 1].power *
+                                   currentHarmonic % sizeSineWave;
+                auto position   =  positionSet.position.back();
+                resultHarmonic +=  sourceHarmonic[position];
+                sourceHarmonic[position] = resultHarmonic *
+                                           (*_baseSineWave)[power];
+            };
+            //2. ќбработка последнего набора позиций матрицы свертки
+            const auto& lastPosition = _convolutionLayout[sizeConvolution - 1];
+            size_t      power        =  lastPosition.power *
+                                        currentHarmonic % sizeSineWave;
+            for (size_t k = 0; k + 1 < lastPosition.position.size(); ++k) {
+
+               const auto position = lastPosition.position[k];
+               sourceHarmonic[position] *= (*_baseSineWave)[power];
+            };
+
+            sourceHarmonic.push_front(adding);
+        };
 
 
     };
-
-
-
-
-
 
 
 

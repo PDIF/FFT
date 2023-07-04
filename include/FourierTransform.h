@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <map>
-
+#include <set>
 #include "boost/circular_buffer.hpp"
 
 #include "BaseSineWave.h"
@@ -21,7 +21,6 @@ class FourierTransform
     using complex_vec_t  = std::vector<complex_t>;
     using complex_map_t  = std::map<size_t, complex_t>;
     using ring_complex_t = boost::circular_buffer<complex_t>;
-
 
     ///Класс для проверки валидности базовой синусоиды
     class Valid
@@ -124,6 +123,7 @@ protected:
     ///Наиболее востребованный набор вычисляемых гармоник
     static const size_vec_t defaultHarmonics() {
         return size_vec_t{0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13};
+
     };
 
 

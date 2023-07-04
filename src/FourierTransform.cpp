@@ -7,6 +7,11 @@ using ring_complex_t = boost::circular_buffer<complex_t>;
 using complex_map_t  = std::map<size_t, complex_t>;
 
 
+using complex_map_t  = std::map<size_t, complex_t>;
+using size_set_t     = std::set<size_t>;
+
+
+
 FourierTransform::FourierTransform(
     const base_wave_t* initBaseSineWave,
     const size_vec_t&  initHarmonics,

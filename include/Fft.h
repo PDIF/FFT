@@ -4,8 +4,8 @@
 
 #include <complex>
 #include <vector>
-
-#include "ReferenceSineWave.h"
+#include <map>
+//#include "ReferenceSineWave.h"
 #include "BaseSineWave.h"
 #include "FourierTransform.h"
 
@@ -18,10 +18,9 @@ class Fft : public FourierTransform
     using size_matrix_t  = std::vector<size_vec_t>;
     using complex_t      = std::complex<double>;
     using complex_vec_t  = std::vector<complex_t>;
-    //using ring_complex_t = RingBuffer<complex_t>;
     using ring_complex_t = boost::circular_buffer<complex_t>;
 
-    using ring_base_t    = std::vector<ring_complex_t>;
+    using ring_map_t    = std::map<size_t, ring_complex_t>;
 
     //Объявление базового класса для подключения к нему дружественных методов
     class Base;
@@ -249,10 +248,10 @@ private:
     Base            _baseLayout;//
 
     ///Матрица свертки
-    ring_base_t     _convolutionData;
+    ring_map_t     _convolutionData;
 
     ///Матрица базы
-    ring_base_t     _baseData;//
+    ring_map_t     _baseData;//
 
     ///Результат расчета матрицы базы
     complex_vec_t   _baseResult;//
@@ -269,7 +268,7 @@ private:
     void _updateResult() noexcept;
 
     ///Формирование матрицы свертки
-    ring_base_t _initConvolutionData(size_t newHarmonicsNumber,
+    ring_map_t _initConvolutionData(size_t newHarmonicsNumber,
                                      size_t newConvolutionLength);
     ///Формирование матрицы базы
     ring_base_t _initBaseData(size_t newBaseLayoutSize,
