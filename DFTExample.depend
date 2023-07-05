@@ -301,10 +301,10 @@
 	"BaseSineWave.h"
 	<assert.h>
 
-1688368302 d:\projects\dftexample\fft\include\fft.h
+1688549874 d:\projects\dftexample\fft\include\fft.h
 	<complex>
 	<vector>
-	"ReferenceSineWave.h"
+	<map>
 	"BaseSineWave.h"
 	"FourierTransform.h"
 	"boost/circular_buffer.hpp"
@@ -339,7 +339,7 @@
 1686920522 source:d:\projects\dftexample\fft\src\convolution.cpp
 	"Convolution.h"
 
-1688481154 source:d:\projects\dftexample\fft\src\dft.cpp
+1688481651 source:d:\projects\dftexample\fft\src\dft.cpp
 	"Dft.h"
 
 1688380378 source:d:\projects\dftexample\fft\src\fft.cpp
@@ -406,16 +406,17 @@
 	<cmath>
 	<assert.h>
 
-1688479045 d:\projects\dftexample\fft\include\fouriertransform.h
+1688533777 d:\projects\dftexample\fft\include\fouriertransform.h
 	<vector>
 	<algorithm>
 	<stdexcept>
 	<map>
+	<set>
 	"boost/circular_buffer.hpp"
 	"BaseSineWave.h"
 	<iostream>
 
-1688479524 source:d:\projects\dftexample\fft\src\fouriertransform.cpp
+1688533777 source:d:\projects\dftexample\fft\src\fouriertransform.cpp
 	"FourierTransform.h"
 
 1688383732 source:d:\projects\dftexample\fft\src\rdft.cpp

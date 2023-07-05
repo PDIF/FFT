@@ -5,7 +5,6 @@
 #include <complex>
 #include <vector>
 #include <map>
-//#include "ReferenceSineWave.h"
 #include "BaseSineWave.h"
 #include "FourierTransform.h"
 
@@ -62,6 +61,12 @@ class Fft : public FourierTransform
         const size_t size() const noexcept {
             return _position.size();
         };
+
+        ///Последний вектор свертки
+        const size_t back() const noexcept {
+            return _position.back();
+        };
+
 
         ///Содержимое макета свертки отдельной степени
         const Data& operator[](size_t index) const {
@@ -271,7 +276,7 @@ private:
     ring_map_t _initConvolutionData(size_t newHarmonicsNumber,
                                      size_t newConvolutionLength);
     ///Формирование матрицы базы
-    ring_base_t _initBaseData(size_t newBaseLayoutSize,
+    ring_map_t _initBaseData(size_t newBaseLayoutSize,
                               size_t newBaseLayoutStep);
     ///Формирование вектора расчета матрицы базы
     complex_vec_t _initBaseResult(size_t newBaseLayoutSize);
