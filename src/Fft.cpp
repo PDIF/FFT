@@ -6,7 +6,10 @@ using complex_t      = std::complex<double>;
 using complex_vec_t  = std::vector<complex_t>;
 //using ring_complex_t = RingBuffer<complex_t>;
 using ring_complex_t = boost::circular_buffer<complex_t>;
-using ring_base_t    = std::vector<ring_complex_t>;
+
+//using ring_base_t    = std::vector<ring_complex_t>;
+
+using ring_map_t     = std::map<size_t, ring_complex_t>;
 
 
 Fft::Fft(
@@ -17,9 +20,7 @@ Fft::Fft(
 :  FourierTransform ( initBaseSineWave, initHarmonics, initAngle, initAmplitude)
 , _convolutionLayout( Convolution(initBaseSineWave))
 , _baseLayout       ( Base(initBaseSineWave))
-, _convolutionData  (_initConvolutionData(
-                         _result.size(),
-                         _convolutionLayout.length()))
+, _convolutionData  (_initConvolutionData(_convolutionLayout.length()))
 , _baseData         (_initBaseData(
                          _baseLayout.size(),
                          _baseLayout.step()))
@@ -56,9 +57,7 @@ void Fft::setNewBase(const base_wave_t* newBaseSineWave)
 
    _convolutionLayout =  Convolution(newBaseSineWave);
    _baseLayout        =  Base(newBaseSineWave);
-   _convolutionData   = _initConvolutionData(
-                            _result.size(),
-                            _convolutionLayout.length());
+   _convolutionData   = _initConvolutionData(_convolutionLayout.length());
    _baseData          = _initBaseData(
                             _baseLayout.size(),
                             _baseLayout.step());
@@ -70,9 +69,7 @@ void Fft::setNewHarmonicalSet(const size_vec_t& newSet)
 {
     FourierTransform::setNewHarmonicalSet(newSet);
 
-   _convolutionData   = _initConvolutionData(
-                            _result.size(),
-                            _convolutionLayout.length());
+   _convolutionData   = _initConvolutionData(_convolutionLayout.length());
 };
 
 
@@ -129,40 +126,31 @@ void Fft::_updateResult() noexcept
             for (size_t j = 0; j < sizeConvolution - 1; ++j) {
 
                 const auto& positionSet = _convolutionLayout[j];
-                //size_t power = positionSet.power * harmonic % sizeSineWave;
-
                 for (size_t k = 0; k + 1 < positionSet.position.size(); ++k) {
 
                     const auto position    = positionSet.position[k];
-                    valueConvolution   += convolution[position];
+                    valueConvolution      += convolution[position];
                     convolution[position] *= (*_baseSineWave)[power];
                 };
 
-//                size_t power    = _convolutionLayout[j + 1].power *
-//                                   harmonic % sizeSineWave;
                 power = (*(&positionSet + 1)).power * harmonic % sizeSineWave;
-                auto position            =  positionSet.position.back();
-                valueConvolution     +=  sourceHarmonic[position];
-                sourceHarmonic[position] =  valueConvolution *
-                                           (*_baseSineWave)[power];
+                const auto position   = positionSet.position.back();
+                valueConvolution     += convolution[position];
+                convolution[position] = valueConvolution *
+                                        (*_baseSineWave)[power];
             };
-
 
             //2. Обработка последнего набора позиций матрицы свертки
             const auto& positionSet = _convolutionLayout.back();
-            //const auto& lastPosition = _convolutionLayout[sizeConvolution - 1];
-//            size_t      power        =  lastPosition.power *
-//                                        currentHarmonic % sizeSineWave;
-            power =  positionSet.power * harmonic % sizeSineWave;
+            power = positionSet.power * harmonic % sizeSineWave;
 
-            //for (size_t k = 0; k + 1 < lastPosition.position.size(); ++k) {
             for (size_t k = 0; k + 1 < positionSet.position.size(); ++k) {
 
                 const auto position = positionSet.position[k];
-                sourceHarmonic[position] *= (*_baseSineWave)[power];
+                convolution[position] *= (*_baseSineWave)[power];
             };
 
-            sourceHarmonic.push_front(valueAdding);
+            convolution.push_front(valueAdding);
         };
 
 
@@ -235,22 +223,32 @@ void Fft::_updateResult() noexcept
 };
 
 
-ring_base_t Fft::_initConvolutionData(size_t newHarmonicsNumber,
-                                      size_t newConvolutionLength)
+ring_map_t Fft::_initConvolutionData(size_t newConvolutionLength)
 {
-    return ring_base_t(
-               newHarmonicsNumber,
-               ring_complex_t(newConvolutionLength, _zero));
+
+    ring_map_t tmpConvolution;
+
+    for (auto& harmonic : _result) {
+        tmpConvolution[harmonic.first] = ring_complex_t( newConvolutionLength,
+                                                        _zero);
+    };
+
+    return tmpConvolution;
 };
 
 
-ring_base_t Fft::_initBaseData(size_t newBaseLayoutSize,
-                               size_t newBaseLayoutStep)
+ring_map_t Fft::_initBaseData(size_t newBaseLayoutSize,
+                              size_t newBaseLayoutStep)
 {
-    return ring_base_t(
-               newBaseLayoutSize,
-               ring_complex_t((newBaseLayoutSize - 1) * newBaseLayoutStep,
-                              _zero));
+
+    ring_map_t tmpBase;
+
+    for (size_t i = 0; i < newBaseLayoutSize; ++i) {
+        tmpBase[i] = ring_complex_t((newBaseLayoutSize - 1) * newBaseLayoutStep,
+                                    _zero);
+    };
+
+    return tmpBase;
 };
 
 

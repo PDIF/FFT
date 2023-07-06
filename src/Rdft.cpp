@@ -12,7 +12,7 @@ Rdft::Rdft(
     double             initAmplitude)
 :  FourierTransform( initBaseSineWave, initHarmonics, initAngle, initAmplitude)
 , _rotateStep      ( RotateStep(initBaseSineWave))
-, _rotateFactor    (_computeCorrectionFactor())
+//, _rotateFactor    (_computeCorrectionFactor())
 {
     //ctor
 
@@ -36,23 +36,52 @@ void Rdft::update(double newValue)
 
     complex_t complexValue(FourierTransform::_correction * newValue);
 
-    for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
-        size_t harmonic = FourierTransform::_harmonics[i];
 
-       _result[i] = _result[i] * (*_baseSineWave)[harmonic] -
-                    _instant[_baseSineWave->size() - 1] + complexValue;
-    }
 
     ++_rotateStep;
-    if (_rotateStep.status()) {
-        _rotateStep.reset();
+    if (!_rotateStep.status()) {
 
-        for (size_t i = 0; i < FourierTransform::_harmonics.size(); ++i) {
-            _result[i] *= _rotateFactor[i];
+        for (auto& [harmonic, value] : _result) {
+            value *= (*_baseSineWave)[harmonic];
+            value += complexValue - _instant[_baseSineWave->size() - 1];
+        };
+
+    } else {
+
+       _rotateStep.reset();
+
+        for (auto& [harmonic, value] : _result) {
+
+            value = complexValue;
+            size_t position = 0;
+
+            const auto& size = _baseSineWave->size();
+
+            for (size_t j = 1; j < size; ++j) {
+
+                position += harmonic;
+
+                if (position >= size) {
+                    position -= size;
+                };
+
+                value += _instant[j] * _baseSineWave->operator[](position);
+            };
         };
     };
 
-   _instant.push_front(complexValue);
+
+    _instant.push_front(complexValue);
+
+
+
+
+
+
+
+
+
+
 };
 
 
@@ -60,17 +89,17 @@ void Rdft::setNewBase(const base_wave_t* newBaseSineWave)
 {
     FourierTransform::setNewBase(newBaseSineWave);
    _rotateStep   =  RotateStep(newBaseSineWave);
-   _rotateFactor = _computeCorrectionFactor();
+ //  _rotateFactor = _computeCorrectionFactor();
 };
 
 
 void Rdft::setNewHarmonicalSet(const size_vec_t& newSet)
 {
     FourierTransform::setNewHarmonicalSet(newSet);
-   _rotateFactor = _computeCorrectionFactor();
+  // _rotateFactor = _computeCorrectionFactor();
 };
 
-
+/*
 complex_vec_t  Rdft::_computeCorrectionFactor()
 {
 
@@ -96,3 +125,5 @@ complex_vec_t  Rdft::_computeCorrectionFactor()
 
     return tmpCorrectionFactor;
 };
+
+*/

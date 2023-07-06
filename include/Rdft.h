@@ -10,6 +10,10 @@ class Rdft : public FourierTransform
     using complex_t     = std::complex<double>;
     using complex_vec_t = std::vector<complex_t>;
 
+
+
+
+
     ///Класс подсчета шагов для учета компенсации вычислительной погрешности
     class RotateStep
     {
@@ -80,14 +84,14 @@ private:
 
     //Компенсация вычислительной погрешности
     RotateStep      _rotateStep;
-    complex_vec_t   _rotateFactor;
+    //complex_vec_t   _rotateFactor;
 
     //========
     // Методы
     //========
 
     ///Вычисление корректирующего множителя по гармоникам
-    complex_vec_t   _computeCorrectionFactor();
+    //complex_vec_t   _computeCorrectionFactor();
 
 };
 

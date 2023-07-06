@@ -19,7 +19,7 @@ class Fft : public FourierTransform
     using complex_vec_t  = std::vector<complex_t>;
     using ring_complex_t = boost::circular_buffer<complex_t>;
 
-    using ring_map_t    = std::map<size_t, ring_complex_t>;
+    using ring_map_t     = std::map<size_t, ring_complex_t>;
 
     //Объявление базового класса для подключения к нему дружественных методов
     class Base;
@@ -62,8 +62,8 @@ class Fft : public FourierTransform
             return _position.size();
         };
 
-        ///Последний вектор свертки
-        const size_t back() const noexcept {
+        ///Последний блок данных свертки
+        const Data& back() const noexcept {
             return _position.back();
         };
 
@@ -273,11 +273,12 @@ private:
     void _updateResult() noexcept;
 
     ///Формирование матрицы свертки
-    ring_map_t _initConvolutionData(size_t newHarmonicsNumber,
-                                     size_t newConvolutionLength);
+    ring_map_t _initConvolutionData(size_t newConvolutionLength);
+
     ///Формирование матрицы базы
     ring_map_t _initBaseData(size_t newBaseLayoutSize,
-                              size_t newBaseLayoutStep);
+                             size_t newBaseLayoutStep);
+
     ///Формирование вектора расчета матрицы базы
     complex_vec_t _initBaseResult(size_t newBaseLayoutSize);
 
