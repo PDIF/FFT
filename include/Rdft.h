@@ -2,6 +2,7 @@
 #define RDFT_H
 
 #include "FourierTransform.h"
+#include <iostream>
 
 class Rdft : public FourierTransform
 {
@@ -9,10 +10,7 @@ class Rdft : public FourierTransform
     using size_vec_t    = std::vector<size_t>;
     using complex_t     = std::complex<double>;
     using complex_vec_t = std::vector<complex_t>;
-
-
-
-
+    using complex_map_t = std::map<size_t, complex_t>;
 
     ///Класс подсчета шагов для учета компенсации вычислительной погрешности
     class RotateStep
@@ -21,7 +19,7 @@ class Rdft : public FourierTransform
 
         RotateStep(
             const base_wave_t* initBaseSineWave,
-            size_t             initPeriodNumber = 200)
+            size_t             initPeriodNumber = 50)
         : _periodSize    ( initBaseSineWave ? initBaseSineWave->size() : 0)
         , _periodesNumber( initPeriodNumber)
         , _max           (_periodSize * _periodesNumber)

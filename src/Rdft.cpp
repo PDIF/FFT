@@ -4,6 +4,7 @@ using base_wave_t   = BaseSineWave;
 using size_vec_t    = std::vector<size_t>;
 using complex_t     = std::complex<double>;
 using complex_vec_t = std::vector<complex_t>;
+using complex_map_t = std::map<size_t, complex_t>;
 
 Rdft::Rdft(
     const base_wave_t* initBaseSineWave,
@@ -36,41 +37,48 @@ void Rdft::update(double newValue)
 
     complex_t complexValue(FourierTransform::_correction * newValue);
 
-
-
     ++_rotateStep;
-    if (!_rotateStep.status()) {
+
+//    if (!_rotateStep.status()) {
 
         for (auto& [harmonic, value] : _result) {
             value *= (*_baseSineWave)[harmonic];
             value += complexValue - _instant[_baseSineWave->size() - 1];
         };
 
-    } else {
-
+//    } else {
+/*
        _rotateStep.reset();
+        const auto& size    = _baseSineWave->size();
 
-        for (auto& [harmonic, value] : _result) {
+        static complex_map_t::iterator step = _result.begin();
 
-            value = complexValue;
-            size_t position = 0;
 
-            const auto& size = _baseSineWave->size();
 
-            for (size_t j = 1; j < size; ++j) {
+        size_t     harmonic = step->first;
+        complex_t& value    = step->second;
 
-                position += harmonic;
+        value = complexValue;
 
-                if (position >= size) {
-                    position -= size;
-                };
+        size_t     position = harmonic;
+        for (size_t j = 0; j + 1 < size; ++j) {
 
-                value += _instant[j] * _baseSineWave->operator[](position);
+            if (position >= size) {
+                position -= size;
             };
+            value    += _instant.at(j) * _baseSineWave->operator[](position);
+            position +=  harmonic;
         };
+
+        ++step;
+        if (step == _result.end()) {
+            step = _result.begin();
+        };
+
+
+        std::cout << step->first << "\t" << step->second << "\n"; // _result[step->first] << "\n";
     };
-
-
+*/
     _instant.push_front(complexValue);
 
 
