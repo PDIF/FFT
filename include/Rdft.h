@@ -19,7 +19,7 @@ class Rdft : public FourierTransform
 
         RotateStep(
             const base_wave_t* initBaseSineWave,
-            size_t             initPeriodNumber = 50)
+            size_t             initPeriodNumber = 25)
         : _periodSize    ( initBaseSineWave ? initBaseSineWave->size() : 0)
         , _periodesNumber( initPeriodNumber)
         , _max           (_periodSize * _periodesNumber)

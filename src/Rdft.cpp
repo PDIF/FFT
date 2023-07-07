@@ -39,21 +39,19 @@ void Rdft::update(double newValue)
 
     ++_rotateStep;
 
-//    if (!_rotateStep.status()) {
+    if (!_rotateStep.status()) {
 
         for (auto& [harmonic, value] : _result) {
             value *= (*_baseSineWave)[harmonic];
             value += complexValue - _instant[_baseSineWave->size() - 1];
         };
 
-//    } else {
-/*
+    } else {
+
        _rotateStep.reset();
         const auto& size    = _baseSineWave->size();
 
         static complex_map_t::iterator step = _result.begin();
-
-
 
         size_t     harmonic = step->first;
         complex_t& value    = step->second;
@@ -75,10 +73,10 @@ void Rdft::update(double newValue)
             step = _result.begin();
         };
 
+//        std::cout << harmonic << "\t" << value << "\t" << "\n"; // _result[step->first] << "\n";
 
-        std::cout << step->first << "\t" << step->second << "\n"; // _result[step->first] << "\n";
     };
-*/
+
     _instant.push_front(complexValue);
 
 
